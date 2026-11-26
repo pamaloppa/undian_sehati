@@ -8,7 +8,7 @@ const DEFAULT_PRIZES = [
     { id: 'prize_4', name: 'TV 32 Inch', icon: '📺', num: 4, isGrandPrize: false },
     { id: 'prize_3', name: 'Kulkas 2 Pintu', icon: '❄️', num: 3, isGrandPrize: false },
     { id: 'prize_2', name: 'Sepeda Lipat', icon: '🚲', num: 2, isGrandPrize: false },
-    { id: 'prize_1', name: 'Sepeda Listrik', icon: '🏍️', num: 1, isGrandPrize: true }
+    { id: 'prize_1', name: 'Sepeda Listrik', icon: '🛵', num: 1, isGrandPrize: true }
 ];
 
 const STORAGE_KEYS = {
@@ -607,7 +607,7 @@ function onAllSlotsLocked(winners) {
 
         if (nextPrize) {
             if (nextPrize.isGrandPrize) {
-                msgEl.innerHTML = `🎉 Selamat! Pengundian untuk <strong>${currentPrize.name}</strong> selesai! Bersiaplah menuju 👑 <strong>PUNCAK GRAND PRIZE: ${nextPrize.name}</strong>! 🏍️`;
+                msgEl.innerHTML = `🎉 Selamat! Pengundian untuk <strong>${currentPrize.name}</strong> selesai! Bersiaplah menuju 👑 <strong>PUNCAK GRAND PRIZE: ${nextPrize.name}</strong>! 🛵`;
                 btnNext.textContent = `👑 Lanjut ke PUNCAK GRAND PRIZE (${nextPrize.name}) 👉`;
             } else {
                 msgEl.innerHTML = `🎉 Selamat! Pengundian untuk <strong>${currentPrize.name}</strong> selesai! (${winners.length} Pemenang Sah).`;
@@ -820,7 +820,7 @@ function renderSlotPlaceholders(count = 1) {
     slot.id = 'slot-card-1';
 
     const rankBadgeHtml = isGrand
-        ? `👑 HADIAH UTAMA #1: ${currentPrize.name.toUpperCase()} 🏍️`
+        ? `👑 HADIAH UTAMA #1: ${currentPrize.name.toUpperCase()} 🛵`
         : `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> Hadiah #${currentPrize.num}: ${currentPrize.name}`;
 
     slot.innerHTML = `
@@ -1175,7 +1175,7 @@ function openWinnerSpotlightModal(roundData) {
                          AppState.prizes.find(p => p.name.toLowerCase() === (roundData.prizeName || '').toLowerCase()) || 
                          {};
         const prizeNum = prizeObj.num || (isGrand ? 1 : '');
-        const prizeIcon = prizeObj.icon || (isGrand ? '🏍️' : '🎁');
+        const prizeIcon = prizeObj.icon || (isGrand ? '🛵' : '🎁');
         const prizeName = roundData.prizeName || prizeObj.name || 'Hadiah';
 
         if (isGrand) {
@@ -1254,7 +1254,7 @@ function openAllWinnersModal() {
 
     // Daftar 5 hadiah resmi urut dari Hadiah Utama #1 Sepeda Listrik s/d Hadiah #5 Mesin Cuci
     const prizesList = [
-        AppState.prizes.find(p => p.id === 'prize_1') || { id: 'prize_1', name: 'Sepeda Listrik', icon: '🏍️', num: 1, isGrandPrize: true },
+        AppState.prizes.find(p => p.id === 'prize_1') || { id: 'prize_1', name: 'Sepeda Listrik', icon: '🛵', num: 1, isGrandPrize: true },
         AppState.prizes.find(p => p.id === 'prize_2') || { id: 'prize_2', name: 'Sepeda Lipat', icon: '🚲', num: 2, isGrandPrize: false },
         AppState.prizes.find(p => p.id === 'prize_3') || { id: 'prize_3', name: 'Kulkas 2 Pintu', icon: '❄️', num: 3, isGrandPrize: false },
         AppState.prizes.find(p => p.id === 'prize_4') || { id: 'prize_4', name: 'TV 32 Inch', icon: '📺', num: 4, isGrandPrize: false },
