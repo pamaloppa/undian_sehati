@@ -1242,12 +1242,27 @@ function openWinnerSpotlightModal(roundData) {
                     (roundData.prizeName && roundData.prizeName.toLowerCase().includes('sepeda listrik'));
 
     if (titleEl) {
+        const prizeObj = AppState.prizes.find(p => p.id === roundData.prizeId) || 
+                         AppState.prizes.find(p => p.name.toLowerCase() === (roundData.prizeName || '').toLowerCase()) || 
+                         {};
+        const prizeNum = prizeObj.num || (isGrand ? 1 : '');
+        const prizeIcon = prizeObj.icon || (isGrand ? '⚡🚲' : '🎁');
+        const prizeName = roundData.prizeName || prizeObj.name || 'Hadiah';
+
         if (isGrand) {
-            titleEl.innerHTML = `👑 <span style="color:#fbbf24; text-shadow:0 0 15px rgba(251,191,36,0.6); font-weight:900;">HADIAH UTAMA #1:</span> ${roundData.prizeName || 'Sepeda Listrik'} ⚡🚲`;
+            titleEl.className = 'modal-subtitle grand';
+            titleEl.innerHTML = `
+                <span class="modal-prize-badge">👑 HADIAH UTAMA #1</span>
+                <span class="modal-prize-name-text">${prizeName.toUpperCase()}</span>
+                <span class="modal-prize-icon-span">${prizeIcon}</span>
+            `;
         } else {
-            const prizeObj = AppState.prizes.find(p => p.id === roundData.prizeId) || {};
-            const prizeNumStr = prizeObj.num ? `Hadiah #${prizeObj.num}: ` : '';
-            titleEl.textContent = `Pemenang Sah: ${prizeNumStr}${roundData.prizeName || 'Hadiah'}`;
+            titleEl.className = 'modal-subtitle';
+            titleEl.innerHTML = `
+                <span class="modal-prize-badge">HADIAH #${prizeNum}</span>
+                <span class="modal-prize-name-text">${prizeName.toUpperCase()}</span>
+                <span class="modal-prize-icon-span">${prizeIcon}</span>
+            `;
         }
     }
     gridEl.innerHTML = '';
