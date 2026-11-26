@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Undian ASN SEHATI - BKPSDM</title>
     <link rel="icon" type="image/png" href="assets/logo_asn_sehati.png">
-    <link rel="stylesheet" href="css/style.css?v=3.2">
+    <link rel="stylesheet" href="css/style.css?v=3.3">
 </head>
 <body class="stage-active">
 
@@ -141,6 +141,17 @@
                     <svg class="pulse-line-svg-compact" viewBox="0 0 180 20">
                         <path d="M0,10 L50,10 L62,2 L74,18 L84,0 L94,20 L104,5 L114,10 L180,10" />
                     </svg>
+                </div>
+            </div>
+
+            <!-- ================= BANNER DISCLAIMER RESMI NOMINASI ================= -->
+            <div class="stage-disclaimer-banner">
+                <div class="sdb-badge">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    <span>DISCLAIMER</span>
+                </div>
+                <div class="sdb-content">
+                    Peserta yang masuk nominasi undian ini adalah <strong>ASN yang melakukan aktivitas di Aplikasi ASN SEHATI</strong> dengan pencatatan aktivitas yang ditutup <strong>sampai pukul 07.00 WIB</strong>.
                 </div>
             </div>
 
@@ -335,6 +346,15 @@
                     <!-- Sync Status Alert -->
                     <div class="alert-box" id="nominasi-match-alert" style="display: none;"></div>
 
+                    <!-- Disclaimer Ketentuan Nominasi -->
+                    <div class="nominasi-disclaimer-box">
+                        <div class="ndb-icon">⚠️</div>
+                        <div class="ndb-body">
+                            <strong>Ketentuan / Disclaimer Nominasi Pemenang:</strong>
+                            <p>Peserta yang berhak masuk dalam nominasi undian ini adalah <strong>ASN yang melakukan aktivitas di Aplikasi ASN SEHATI</strong> dengan batas pencatatan aktivitas yang ditutup (cut-off) <strong>sampai pukul 07.00 WIB</strong>.</p>
+                        </div>
+                    </div>
+
                     <div class="alert-box info" style="margin-top: 12px;">
                         <div>
                             <strong>Format Kolom Nominasi ASN SEHATI:</strong><br>
@@ -490,6 +510,9 @@
             <div class="modal-header-badge">SAH & TERVERIFIKASI BKPSDM</div>
             <h2 class="modal-title">SELAMAT KEPADA PEMENANG!</h2>
             <div class="modal-subtitle" id="modal-prize-title">Mesin Cuci</div>
+            <div class="modal-spotlight-disclaimer">
+                ℹ️ Nominasi pemenang: ASN yang beraktivitas di Aplikasi ASN SEHATI (Aktivitas disetop s/d pukul 07.00 WIB)
+            </div>
 
             <div class="modal-winners-grid" id="modal-winners-grid">
                 <!-- 1 single modal winner card -->
@@ -519,6 +542,10 @@
                 <div class="all-winners-banner-badge">JJS SUMENEP 2026 • BKPSDM</div>
                 <h2 class="all-winners-main-title">🏆 DAFTAR LENGKAP SELURUH PEMENANG UNDIAN 🏆</h2>
                 <p class="all-winners-subtitle">Pemerintah Kabupaten Sumenep • Pengundian Sah & Terverifikasi ASN SEHATI</p>
+                <div class="all-winners-disclaimer-pill">
+                    <span class="aw-disc-badge">DISCLAIMER</span>
+                    <span>Peserta nominasi adalah ASN yang beraktivitas di Aplikasi ASN SEHATI (Pencatatan aktivitas ditutup sampai pukul 07.00 WIB)</span>
+                </div>
             </div>
 
             <!-- Grid 5 Pemenang Hadiah Layar Besar -->
@@ -623,13 +650,13 @@
         <source src="assets/grand_prize.mp3" type="audio/mpeg">
     </audio>
 
-    <!-- SCRIPT APPLICATION (Cache-busted v=3.2) -->
-    <script src="js/csv-parser.js?v=3.2"></script>
-    <script src="js/audio.js?v=3.2"></script>
-    <script src="js/confetti.js?v=3.2"></script>
-    <script src="js/db.js?v=3.2"></script>
-    <script src="js/peerjs.min.js?v=3.2"></script>
-    <script src="js/sync-p2p.js?v=3.2"></script>
-    <script src="js/app.js?v=3.2"></script>
+    <!-- SCRIPT APPLICATION (Cache-busted v=3.3) -->
+    <script src="js/csv-parser.js?v=3.3"></script>
+    <script src="js/audio.js?v=3.3"></script>
+    <script src="js/confetti.js?v=3.3"></script>
+    <script src="js/db.js?v=3.3"></script>
+    <script src="js/peerjs.min.js?v=3.3"></script>
+    <script src="js/sync-p2p.js?v=3.3"></script>
+    <script src="js/app.js?v=3.3"></script>
 </body>
 </html>
