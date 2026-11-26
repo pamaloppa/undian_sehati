@@ -118,6 +118,29 @@ window.P2PSync = {
             return;
         }
 
+        if (packet && packet.type === 'CLEAR_MASTER') {
+            window.AppState.masterPegawai = [];
+            if (typeof window.reEvaluateNominasiMatches === 'function') window.reEvaluateNominasiMatches();
+            if (typeof window.saveToStorage === 'function') window.saveToStorage();
+            if (typeof window.renderAllViews === 'function') window.renderAllViews();
+            this.showToast('🗑️ Database Pegawai Master telah dikosongkan oleh Laptop Panitia.');
+            if (this.connection) {
+                this.connection.send({ type: 'SYNC_SUCCESS', message: 'Database Master di Layar Panggung telah dikosongkan.' });
+            }
+            return;
+        }
+
+        if (packet && packet.type === 'CLEAR_NOMINASI') {
+            window.AppState.nominasi = [];
+            if (typeof window.saveToStorage === 'function') window.saveToStorage();
+            if (typeof window.renderAllViews === 'function') window.renderAllViews();
+            this.showToast('🗑️ Data Nominasi telah dikosongkan oleh Laptop Panitia.');
+            if (this.connection) {
+                this.connection.send({ type: 'SYNC_SUCCESS', message: 'Data Nominasi di Layar Panggung telah dikosongkan.' });
+            }
+            return;
+        }
+
         // Jangan timpa jika panggung sedang memutar undian
         if (window.AppState.isRolling) {
             if (this.connection) {
@@ -221,6 +244,17 @@ window.P2PSync = {
                             window.resetAllStatus(true);
                         }
                         this.showToast('🔄 Status undian di-reset oleh Layar Panggung.');
+                    } else if (packet && packet.type === 'CLEAR_MASTER') {
+                        window.AppState.masterPegawai = [];
+                        if (typeof window.reEvaluateNominasiMatches === 'function') window.reEvaluateNominasiMatches();
+                        if (typeof window.saveToStorage === 'function') window.saveToStorage();
+                        if (typeof window.renderAllViews === 'function') window.renderAllViews();
+                        this.showToast('🗑️ Database Master dikosongkan.');
+                    } else if (packet && packet.type === 'CLEAR_NOMINASI') {
+                        window.AppState.nominasi = [];
+                        if (typeof window.saveToStorage === 'function') window.saveToStorage();
+                        if (typeof window.renderAllViews === 'function') window.renderAllViews();
+                        this.showToast('🗑️ Data Nominasi dikosongkan.');
                     }
                 });
 

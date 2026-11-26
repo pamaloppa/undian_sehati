@@ -1385,17 +1385,42 @@ function clearMasterData() {
     AppState.masterPegawai = [];
     reEvaluateNominasiMatches();
     saveToStorage();
-    renderMasterTable();
-    renderNominasiTable();
-    updateStatusBar();
+    renderAllViews();
+
+    // Siarkan ke tab lain di komputer yang sama
+    if (window.SehatiBroadcast) {
+        try { window.SehatiBroadcast.postMessage({ type: 'CLEAR_MASTER' }); } catch (e) {}
+    }
+
+    // Siarkan ke Laptop 1 (Panggung) via WebRTC P2P
+    if (window.P2PSync && window.P2PSync.isConnected && window.P2PSync.connection) {
+        try {
+            window.P2PSync.connection.send({ type: 'CLEAR_MASTER' });
+        } catch (e) {
+            console.warn('Gagal broadcast CLEAR_MASTER:', e);
+        }
+    }
 }
 
 function clearNominasiData() {
     if (!confirm('Apakah Anda yakin ingin mengosongkan Data Nominasi Undian?')) return;
     AppState.nominasi = [];
     saveToStorage();
-    renderNominasiTable();
-    updateStatusBar();
+    renderAllViews();
+
+    // Siarkan ke tab lain di komputer yang sama
+    if (window.SehatiBroadcast) {
+        try { window.SehatiBroadcast.postMessage({ type: 'CLEAR_NOMINASI' }); } catch (e) {}
+    }
+
+    // Siarkan ke Laptop 1 (Panggung) via WebRTC P2P
+    if (window.P2PSync && window.P2PSync.isConnected && window.P2PSync.connection) {
+        try {
+            window.P2PSync.connection.send({ type: 'CLEAR_NOMINASI' });
+        } catch (e) {
+            console.warn('Gagal broadcast CLEAR_NOMINASI:', e);
+        }
+    }
 }
 
 // ============================================================
@@ -1664,7 +1689,17 @@ window.addEventListener('storage', (e) => {
 if (typeof BroadcastChannel !== 'undefined') {
     window.SehatiBroadcast = new BroadcastChannel('SEHATI_LIVE_CHANNEL');
     window.SehatiBroadcast.onmessage = async (event) => {
-        if (event.data && event.data.type === 'LOCAL_DATA_CHANGED') {
+        if (!event.data) return;
+        if (event.data.type === 'CLEAR_MASTER') {
+            console.log('[BROADCAST-CHANNEL] Pengosongan Database Master dari jendela lain');
+            AppState.masterPegawai = [];
+            reEvaluateNominasiMatches();
+            renderAllViews();
+        } else if (event.data.type === 'CLEAR_NOMINASI') {
+            console.log('[BROADCAST-CHANNEL] Pengosongan Data Nominasi dari jendela lain');
+            AppState.nominasi = [];
+            renderAllViews();
+        } else if (event.data.type === 'LOCAL_DATA_CHANGED') {
             console.log('[BROADCAST-CHANNEL] Menerima pembaruan data dari jendela lain!');
             if (window.AppDB && window.AppDB.isReady) {
                 await hydrateFromIndexedDB(true);
