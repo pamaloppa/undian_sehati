@@ -151,6 +151,11 @@ window.P2PSync = {
         if (typeof window.renderAllViews === 'function') {
             window.renderAllViews();
         }
+        // Pastikan seluruh elemen panggung ter-render seketika
+        if (typeof window.updateStatusBar === 'function') window.updateStatusBar();
+        if (typeof window.renderPrizeCards === 'function') window.renderPrizeCards();
+        if (typeof window.renderNominasiTable === 'function') window.renderNominasiTable();
+        if (typeof window.renderMasterTable === 'function') window.renderMasterTable();
 
         const summaryText = updatedMsg.join(' & ') || 'Data Baru';
         this.showToast(`🎉 DATA DIPERBARUI OLEH LAPTOP PANITIA!\n(${summaryText})`);
@@ -195,7 +200,14 @@ window.P2PSync = {
                 conn.on('open', () => {
                     this.isConnected = true;
                     this.updateUiStatus('connected', `🟢 Berhasil Terhubung ke Layar Panggung (Kode: ${this.roomId})`);
-                    this.showToast(`🟢 Terhubung ke Layar Panggung! Setiap CSV yang diunggah akan langsung terkirim.`);
+                    this.showToast(`🟢 Terhubung ke Layar Panggung! Menyinkronkan data...`);
+
+                    // Otomatis kirim data yang ada saat ini ke Layar Panggung tanpa perlu refresh
+                    setTimeout(() => {
+                        if (window.AppState && ((window.AppState.nominasi && window.AppState.nominasi.length > 0) || (window.AppState.masterPegawai && window.AppState.masterPegawai.length > 0))) {
+                            this.broadcastCurrentData('ALL');
+                        }
+                    }, 400);
                 });
 
                 conn.on('data', (packet) => {

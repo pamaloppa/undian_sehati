@@ -1606,3 +1606,26 @@ function resetAllStatus(silent = false) {
         }
     }
 }
+
+// ============================================================
+// EKSPOR GLOBAL KE WINDOW UNTUK SINKRONISASI REAL-TIME
+// ============================================================
+window.renderAllViews = renderAllViews;
+window.reEvaluateNominasiMatches = reEvaluateNominasiMatches;
+window.saveToStorage = saveToStorage;
+window.updateStatusBar = updateStatusBar;
+window.renderPrizeCards = renderPrizeCards;
+window.renderNominasiTable = renderNominasiTable;
+window.renderMasterTable = renderMasterTable;
+window.resetAllStatus = resetAllStatus;
+window.loadFromLocalStorageSync = loadFromLocalStorageSync;
+window.getEligiblePool = getEligiblePool;
+
+// Sinkronisasi otomatis antar-tab dalam satu laptop/browser tanpa refresh
+window.addEventListener('storage', (e) => {
+    if (e.key === STORAGE_KEYS.MASTER || e.key === STORAGE_KEYS.NOMINASI || e.key === STORAGE_KEYS.WINNERS || e.key === STORAGE_KEYS.SETTINGS) {
+        console.log('[MULTI-TAB AUTO-SYNC] Terdeteksi perubahan data dari tab lain:', e.key);
+        loadFromLocalStorageSync();
+        renderAllViews();
+    }
+});
