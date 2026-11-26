@@ -4,11 +4,11 @@
  */
 
 const DEFAULT_PRIZES = [
-    { id: 'prize_5', name: 'Mesin Cuci', icon: '🫧', num: 1, originalRank: 5, label: 'Tahap 1', isGrandPrize: false },
-    { id: 'prize_4', name: 'TV 32 Inch', icon: '📺', num: 2, originalRank: 4, label: 'Tahap 2', isGrandPrize: false },
-    { id: 'prize_3', name: 'Kulkas 2 Pintu', icon: '❄️', num: 3, originalRank: 3, label: 'Tahap 3', isGrandPrize: false },
-    { id: 'prize_2', name: 'Sepeda Lipat', icon: '🚲', num: 4, originalRank: 2, label: 'Tahap 4', isGrandPrize: false },
-    { id: 'prize_1', name: 'Sepeda Listrik', icon: '⚡🚲', num: 5, originalRank: 1, label: '👑 GRAND PRIZE', isGrandPrize: true }
+    { id: 'prize_5', name: 'Mesin Cuci', icon: '🫧', num: 5, isGrandPrize: false },
+    { id: 'prize_4', name: 'TV 32 Inch', icon: '📺', num: 4, isGrandPrize: false },
+    { id: 'prize_3', name: 'Kulkas 2 Pintu', icon: '❄️', num: 3, isGrandPrize: false },
+    { id: 'prize_2', name: 'Sepeda Lipat', icon: '🚲', num: 2, isGrandPrize: false },
+    { id: 'prize_1', name: 'Sepeda Listrik', icon: '⚡🚲', num: 1, isGrandPrize: true }
 ];
 
 const STORAGE_KEYS = {
@@ -665,7 +665,8 @@ function renderPrizeCards() {
         card.className = cardClass;
         card.onclick = () => selectPrize(prize.id);
 
-        const grandPill = prize.isGrandPrize ? `<div class="grand-badge-pill">👑 GRAND PRIZE</div>` : '';
+        const numDisplay = prize.isGrandPrize ? '👑 #1' : '#' + prize.num;
+        const numClass = prize.isGrandPrize ? 'prize-card-num grand' : 'prize-card-num';
 
         if (isDrawn && lastWinner) {
             // TAMPILAN SETELAH DIUNDI: NIP, Nama, OPD, dan Foto Pemenang!
@@ -677,11 +678,10 @@ function renderPrizeCards() {
             const opdDisplay = lastWinner.opd || lastWinner.unitKerja || 'Pemerintah Daerah';
 
             card.innerHTML = `
-                ${grandPill}
                 <div class="prize-card-drawn-layout">
                     <div class="pc-drawn-top">
-                        <span class="prize-card-num">${prize.isGrandPrize ? '👑 #' + prize.num : '#' + prize.num}</span>
-                        <span class="prize-card-title">${prize.name}</span>
+                        <span class="${numClass}">${numDisplay}</span>
+                        <span class="prize-card-title" title="${prize.name}">${prize.name}</span>
                         <span class="prize-card-status drawn">✓ SAH</span>
                     </div>
                     <div class="pc-drawn-winner">
@@ -697,24 +697,23 @@ function renderPrizeCards() {
                 </div>
             `;
         } else {
-            // TAMPILAN STANDBY / BELUM DIUNDI
+            // TAMPILAN STANDBY / BELUM DIUNDI (Bebas tumpang tindih)
             let statusText = 'Siap Diundi';
             if (isActive) {
                 statusText = '★ Sedang Aktif';
             }
 
-            const stepTag = prize.label && !prize.isGrandPrize ? `<span class="prize-step-tag">${prize.label}</span>` : '';
+            const grandPill = prize.isGrandPrize ? `<span class="grand-pill-inline">👑 GRAND PRIZE</span>` : '';
 
             card.innerHTML = `
-                ${grandPill}
-                <div class="prize-card-header-row">
-                    <span class="prize-card-num">${prize.isGrandPrize ? '👑 #' + prize.num : '#' + prize.num}</span>
-                    ${stepTag}
-                </div>
+                <span class="${numClass}">${numDisplay}</span>
                 <div class="prize-card-icon">${prize.icon}</div>
                 <div class="prize-card-body">
-                    <div class="prize-card-title">${prize.name}</div>
-                    <div class="prize-card-status">${statusText}</div>
+                    <div class="prize-card-title" title="${prize.name}">${prize.name}</div>
+                    <div class="prize-card-meta-row">
+                        <span class="prize-card-status">${statusText}</span>
+                        ${grandPill}
+                    </div>
                 </div>
             `;
         }
@@ -735,7 +734,8 @@ function selectPrize(prizeId) {
     const inputEl = document.getElementById('quick-prize-input');
     const nextPrompt = document.getElementById('next-prize-prompt');
 
-    if (displayEl) displayEl.textContent = prize.name;
+    const prefix = prize.isGrandPrize ? '👑 #1 ' : (prize.num ? `#${prize.num} ` : '');
+    if (displayEl) displayEl.textContent = `${prefix}${prize.name}`;
     if (inputEl) inputEl.value = prize.name;
     if (nextPrompt) nextPrompt.style.display = 'none';
 
@@ -757,7 +757,8 @@ function updateDrawButtonLabel() {
     const labelEl = document.getElementById('btn-draw-label');
     if (!labelEl) return;
     const currentPrize = AppState.prizes.find(p => p.id === AppState.selectedPrizeId) || { name: AppState.settings.prizeName };
-    labelEl.textContent = `MULAI UNDI: ${currentPrize.name.toUpperCase()}`;
+    const prefix = currentPrize.isGrandPrize ? '👑 #1 ' : (currentPrize.num ? `#${currentPrize.num} ` : '');
+    labelEl.textContent = `MULAI UNDI: ${prefix}${currentPrize.name.toUpperCase()}`;
 }
 
 function goToNextPrize() {
@@ -805,8 +806,8 @@ function renderSlotPlaceholders(count = 1) {
     slot.id = 'slot-card-1';
 
     const rankBadgeHtml = isGrand
-        ? `👑 PUNCAK GRAND PRIZE: ${currentPrize.name.toUpperCase()} ⚡🚲`
-        : `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> Hadiah Tahap #${currentPrize.num || 1}: ${currentPrize.name}`;
+        ? `👑 HADIAH UTAMA #1: ${currentPrize.name.toUpperCase()} ⚡🚲`
+        : `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> Hadiah #${currentPrize.num}: ${currentPrize.name}`;
 
     slot.innerHTML = `
         <div class="slot-header">
@@ -825,7 +826,7 @@ function renderSlotPlaceholders(count = 1) {
             </span>
         </div>
         <div class="slot-body">
-            <div class="slot-name">${isGrand ? 'Siap Mengundi Hadiah Utama' : 'Siap Diundi'}</div>
+            <div class="slot-name">${isGrand ? 'Siap Mengundi Hadiah Utama #1' : 'Siap Diundi'}</div>
             <div class="slot-nip">NIP: ••••••••••••••••••</div>
             <div class="slot-unit">Tekan tombol di bawah untuk mengundi pemenang</div>
             <div class="slot-jabatan"></div>
@@ -1242,9 +1243,11 @@ function openWinnerSpotlightModal(roundData) {
 
     if (titleEl) {
         if (isGrand) {
-            titleEl.innerHTML = `👑 <span style="color:#fbbf24; text-shadow:0 0 15px rgba(251,191,36,0.6); font-weight:900;">PUNCAK GRAND PRIZE:</span> ${roundData.prizeName || 'Sepeda Listrik'} ⚡🚲`;
+            titleEl.innerHTML = `👑 <span style="color:#fbbf24; text-shadow:0 0 15px rgba(251,191,36,0.6); font-weight:900;">HADIAH UTAMA #1:</span> ${roundData.prizeName || 'Sepeda Listrik'} ⚡🚲`;
         } else {
-            titleEl.textContent = `Pemenang Sah: ${roundData.prizeName || 'Hadiah Utama'}`;
+            const prizeObj = AppState.prizes.find(p => p.id === roundData.prizeId) || {};
+            const prizeNumStr = prizeObj.num ? `Hadiah #${prizeObj.num}: ` : '';
+            titleEl.textContent = `Pemenang Sah: ${prizeNumStr}${roundData.prizeName || 'Hadiah'}`;
         }
     }
     gridEl.innerHTML = '';
