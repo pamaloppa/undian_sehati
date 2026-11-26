@@ -21,10 +21,14 @@ window.P2PSync = {
         const savedRoom = localStorage.getItem('SEHATI_P2P_ROOM');
         if (savedRoom) this.roomId = savedRoom;
 
-        const savedRole = localStorage.getItem('SEHATI_P2P_ROLE');
-        if (savedRole === 'stage') {
+        // Bersihkan role dari localStorage agar tidak menginfeksi tab baru di browser yang sama
+        localStorage.removeItem('SEHATI_P2P_ROLE');
+
+        // Gunakan sessionStorage (terisolasi per-tab) sehingga setiap jendela/tab independen
+        const sessionRole = sessionStorage.getItem('SEHATI_P2P_ROLE');
+        if (sessionRole === 'stage') {
             this.startAsStage(this.roomId, false);
-        } else if (savedRole === 'admin') {
+        } else if (sessionRole === 'admin') {
             this.connectToStage(this.roomId);
         } else {
             this.updateUiStatus('disconnected', 'Pilih peran laptop ini di menu Sinkronisasi P2P (Laptop 1 atau 2).');
@@ -50,6 +54,7 @@ window.P2PSync = {
         this.connection = null;
         this.isConnected = false;
         localStorage.removeItem('SEHATI_P2P_ROLE');
+        sessionStorage.removeItem('SEHATI_P2P_ROLE');
         this.updateUiStatus('disconnected', 'Koneksi P2P di-reset. Pilih peran laptop ini.');
         this.showToast('🔄 Peran P2P di-reset. Silakan tentukan apakah laptop ini Laptop 1 (Panggung) atau Laptop 2 (Panitia).');
     },
@@ -61,8 +66,8 @@ window.P2PSync = {
         if (this.retryTimer) clearTimeout(this.retryTimer);
         this.role = 'stage';
         this.roomId = (customRoomId || 'SEHATI-BKPSDM').trim().toUpperCase();
-        localStorage.setItem('SEHATI_P2P_ROOM', this.roomId);
-        localStorage.setItem('SEHATI_P2P_ROLE', 'stage');
+        sessionStorage.setItem('SEHATI_P2P_ROLE', 'stage');
+        localStorage.removeItem('SEHATI_P2P_ROLE');
 
         if (this.peer) {
             try { this.peer.destroy(); } catch (e) {}
@@ -90,13 +95,13 @@ window.P2PSync = {
             this.peer.on('error', (err) => {
                 console.warn('P2P Error:', err);
                 if (err.type === 'unavailable-id') {
-                    this.updateUiStatus('waiting', `⏳ ID sedang dilepas oleh server PeerJS. Menyambung ulang otomatis dalam 3 detik...`);
+                    this.updateUiStatus('waiting', `⏳ ID "${this.roomId}" sedang dipakai di jendela/laptop lain. Menyambung ulang dalam 4 detik...`);
                     if (this.retryTimer) clearTimeout(this.retryTimer);
                     this.retryTimer = setTimeout(() => {
                         if (this.role === 'stage') {
                             this.startAsStage(this.roomId, false);
                         }
-                    }, 3000);
+                    }, 4000);
                 } else {
                     this.updateUiStatus('error', `Koneksi P2P: ${err.message || err.type}`);
                 }
@@ -232,7 +237,8 @@ window.P2PSync = {
         this.role = 'admin';
         this.roomId = (targetRoomId || 'SEHATI-BKPSDM').trim().toUpperCase();
         localStorage.setItem('SEHATI_P2P_ROOM', this.roomId);
-        localStorage.setItem('SEHATI_P2P_ROLE', 'admin');
+        sessionStorage.setItem('SEHATI_P2P_ROLE', 'admin');
+        localStorage.removeItem('SEHATI_P2P_ROLE');
 
         if (this.peer) {
             try { this.peer.destroy(); } catch (e) {}
