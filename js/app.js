@@ -1252,16 +1252,14 @@ function openWinnerSpotlightModal(roundData) {
     }
     gridEl.innerHTML = '';
 
-    if (isGrand) {
-        const grandBanner = document.createElement('div');
-        grandBanner.className = 'grand-spotlight-banner';
-        grandBanner.innerHTML = `✨ 👑 SELAMAT KEPADA PEMENANG UTAMA ASN SEHATI BKPSDM! 👑 ✨`;
-        gridEl.appendChild(grandBanner);
-    }
-
     roundData.winners.forEach((w) => {
         const card = document.createElement('div');
         card.className = isGrand ? 'modal-winner-card grand-winner' : 'modal-winner-card';
+
+        const grandHeaderBadge = isGrand
+            ? `<div class="grand-winner-header-badge">✨ 👑 PEMENANG UTAMA GRAND PRIZE 👑 ✨</div>`
+            : '';
+
         const achieveBadge = (w.keterangan && w.keterangan !== 'Peserta Nominasi SEHATI')
             ? `<div style="margin-top: 8px; font-size: 0.85rem; color: #fbbf24; background: rgba(251, 191, 36, 0.15); padding: 4px 12px; border-radius: 20px; display: inline-block; border: 1px solid rgba(251, 191, 36, 0.35); font-weight: 600;">${w.keterangan}</div>`
             : '';
@@ -1273,7 +1271,8 @@ function openWinnerSpotlightModal(roundData) {
             : `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #041217; font-weight: 900; font-size: 2.2rem;">${getInitials(w.nama)}</div>`;
 
         card.innerHTML = `
-            <div style="width: 100px; height: 100px; border-radius: 50%; background: var(--gold-gradient); margin: 0 auto 14px; box-shadow: 0 0 25px rgba(251, 191, 36, 0.6); border: 3px solid #ffffff; overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center;">
+            ${grandHeaderBadge}
+            <div style="width: 105px; height: 105px; border-radius: 50%; background: var(--gold-gradient); margin: 0 auto 14px; box-shadow: 0 0 25px rgba(251, 191, 36, 0.6); border: 3px solid #ffffff; overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center;">
                 ${photoHtml}
             </div>
             <div class="modal-winner-name" style="font-size: 1.5rem; margin-bottom: 8px;">${w.nama || '-'}</div>
