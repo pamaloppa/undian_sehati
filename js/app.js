@@ -615,6 +615,7 @@ function onAllSlotsLocked(winners) {
     // Update status counter dan tabel riwayat
     updateStatusBar();
     renderHistoryTab();
+    updateAllWinnersButtonVisibility();
 
     // Buka Spotlight Modal setelah 1.5 detik perayaan
     setTimeout(() => {
@@ -719,6 +720,8 @@ function renderPrizeCards() {
 
         grid.appendChild(card);
     });
+
+    updateAllWinnersButtonVisibility();
 }
 
 function selectPrize(prizeId) {
@@ -787,6 +790,7 @@ function renderAllViews() {
     renderNominasiTable();
     renderHistoryTab();
     renderSettingsTab();
+    updateAllWinnersButtonVisibility();
 }
 
 function renderSlotPlaceholders(count = 1) {
@@ -1055,10 +1059,6 @@ function renderHistoryTab() {
                     <div class="round-timestamp">Dilaksanakan pada: ${round.timestamp}</div>
                 </div>
                 <div style="display: flex; gap: 8px;">
-                    <button class="btn-secondary" style="padding: 6px 14px; font-size: 0.8rem;" onclick="printSingleRound('${round.id}')">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-                        Cetak Berita Acara
-                    </button>
                     <button class="btn-action danger" style="width: auto; padding: 6px 12px; font-size: 0.8rem;" onclick="deleteRound('${round.id}')">
                         Hapus
                     </button>
@@ -1078,7 +1078,9 @@ function deleteRound(roundId) {
     AppState.winnersHistory = AppState.winnersHistory.filter(r => r.id !== roundId);
     saveToStorage();
     renderHistoryTab();
+    renderPrizeCards();
     updateStatusBar();
+    updateAllWinnersButtonVisibility();
 }
 
 function resetAllHistory() {
@@ -1121,111 +1123,28 @@ function exportWinnersCSV() {
 }
 
 // ============================================================
-// CETAK BERITA ACARA RESMI (PRINT FUNCTION)
+// HELPER VISIBILITAS TOMBOL SEMUA PEMENANG
+// (Hanya muncul jika seluruh 5 kategori hadiah sudah selesai diundi)
 // ============================================================
-function printOfficialReport(roundId = null) {
-    let roundsToPrint = AppState.winnersHistory;
-    if (roundId) {
-        roundsToPrint = AppState.winnersHistory.filter(r => r.id === roundId);
-    }
-
-    if (roundsToPrint.length === 0) {
-        alert('Tidak ada data putaran untuk dicetak!');
-        return;
-    }
-
-    let reportHtml = `
-        <div class="print-header-layout">
-            <img src="assets/logo_asn_sehati.png" class="print-logo-img" alt="Logo ASN SEHATI">
-            <div class="print-header-text">
-                <h2>PEMERINTAH KABUPATEN SUMENEP</h2>
-                <h3>BADAN KEPEGAWAIAN DAN PENGEMBANGAN SUMBER DAYA MANUSIA (BKPSDM)</h3>
-                <p style="font-size: 0.95rem; font-weight: bold; margin-top: 4px; letter-spacing: 0.5px;">BERITA ACARA RESMI PENGUNDIAN PEMENANG DOORPRIZE JJS SUMENEP 2026</p>
-            </div>
-        </div>
-        <p style="font-size: 0.85rem; line-height: 1.6; margin-bottom: 16px;">
-            Pada hari ini telah dilaksanakan pengundian dengan sistem acak transparan digital ASN SEHATI. Berikut adalah daftar pemenang yang sah dan telah diverifikasi:
-        </p>
-    `;
-
-    roundsToPrint.forEach((round, rIdx) => {
-        reportHtml += `
-            <div style="margin-bottom: 24px;">
-                <h4 style="margin-bottom: 8px; font-size: 1rem; text-transform: uppercase;">
-                    ${round.prizeName} — (${round.timestamp})
-                </h4>
-                <table class="print-table">
-                    <thead>
-                        <tr style="background: #f1f5f9;">
-                            <th style="width: 40px; text-align: center;">No</th>
-                            <th style="width: 170px;">NIP</th>
-                            <th>Nama Pemenang</th>
-                            <th>Unit Kerja / Instansi</th>
-                            <th>Jabatan</th>
-                            <th style="width: 120px; text-align: center;">Tanda Tangan</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-        `;
-
-        round.winners.forEach((w, wIdx) => {
-            reportHtml += `
-                <tr>
-                    <td style="text-align: center;">${wIdx + 1}</td>
-                    <td style="font-family: monospace;">${w.nip || '-'}</td>
-                    <td><strong>${w.nama || '-'}</strong></td>
-                    <td>${w.unitKerja || '-'}</td>
-                    <td>${w.jabatan || '-'}</td>
-                    <td></td>
-                </tr>
-            `;
-        });
-
-        reportHtml += `
-                    </tbody>
-                </table>
-            </div>
-        `;
-    });
-
-    reportHtml += `
-        <div class="print-signatures">
-            <div class="signature-block">
-                <div>Saksi I</div>
-                <div class="signature-space"></div>
-                <div>( ..................................... )</div>
-                <div style="font-size: 0.75rem; color: #555;">NIP.</div>
-            </div>
-            <div class="signature-block">
-                <div>Saksi II</div>
-                <div class="signature-space"></div>
-                <div>( ..................................... )</div>
-                <div style="font-size: 0.75rem; color: #555;">NIP.</div>
-            </div>
-            <div class="signature-block">
-                <div>Ketua Panitia Undian</div>
-                <div class="signature-space"></div>
-                <div>( ..................................... )</div>
-                <div style="font-size: 0.75rem; color: #555;">NIP.</div>
-            </div>
-        </div>
-    `;
-
-    let printContainer = document.getElementById('print-container');
-    if (!printContainer) {
-        printContainer = document.createElement('div');
-        printContainer.id = 'print-container';
-        printContainer.className = 'print-only-report';
-        document.body.appendChild(printContainer);
-    }
-    printContainer.innerHTML = reportHtml;
-
-    window.print();
+function isAllPrizesDrawn() {
+    if (!AppState.prizes || AppState.prizes.length === 0) return false;
+    return AppState.prizes.every(p => AppState.winnersHistory && AppState.winnersHistory.some(r => 
+        (r.prizeId && String(r.prizeId) === String(p.id)) || 
+        (r.prizeName && r.prizeName.toLowerCase().includes(p.name.toLowerCase()))
+    ));
 }
 
-function printSingleRound(roundId) {
-    printOfficialReport(roundId);
+function updateAllWinnersButtonVisibility() {
+    const allDrawn = isAllPrizesDrawn();
+    const btnStage = document.getElementById('btn-show-all-winners');
+    const btnModal = document.getElementById('btn-modal-show-all-winners');
+    if (btnStage) btnStage.style.display = allDrawn ? 'inline-flex' : 'none';
+    if (btnModal) btnModal.style.display = allDrawn ? 'inline-flex' : 'none';
 }
+
+// Fitur cetak dinonaktifkan sesuai kebutuhan aplikasi
+function printOfficialReport(roundId = null) {}
+function printSingleRound(roundId) {}
 
 // ============================================================
 // MODAL SPOTLIGHT PEMENANG
@@ -1298,6 +1217,7 @@ function openWinnerSpotlightModal(roundData) {
         gridEl.appendChild(card);
     });
 
+    updateAllWinnersButtonVisibility();
     modal.classList.add('active');
 }
 
@@ -1306,12 +1226,7 @@ function closeWinnerSpotlightModal() {
     if (modal) modal.classList.remove('active');
 
     // Jika kelima kategori hadiah sudah diundi, otomatis buka Layar Akbar Semua Pemenang!
-    const allDrawn = AppState.prizes.every(p => AppState.winnersHistory.some(r => 
-        (r.prizeId && String(r.prizeId) === String(p.id)) || 
-        (r.prizeName && r.prizeName.toLowerCase().includes(p.name.toLowerCase()))
-    ));
-
-    if (allDrawn) {
+    if (isAllPrizesDrawn()) {
         setTimeout(() => {
             openAllWinnersModal();
         }, 400);
@@ -1354,9 +1269,9 @@ function openAllWinnersModal() {
 
         if (winner) {
             const photoHtml = winner.foto
-                ? `<img src="${winner.foto}" alt="${winner.nama}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                   <div class="aw-initials">${getInitials(winner.nama)}</div>`
-                : `<div class="aw-initials">${getInitials(winner.nama)}</div>`;
+                ? `<img src="${winner.foto}" alt="${winner.nama}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block;" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';">
+                   <div class="aw-initials" style="width: 100%; height: 100%; display: none; align-items: center; justify-content: center; color: #041217; font-weight: 900; font-size: 1.8rem;">${getInitials(winner.nama)}</div>`
+                : `<div class="aw-initials" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #041217; font-weight: 900; font-size: 1.8rem;">${getInitials(winner.nama)}</div>`;
 
             const jabInfo = [winner.jabatan, winner.pangkatGol].filter(Boolean).join(' • ');
             const achieveBadge = (winner.keterangan && winner.keterangan !== 'Peserta Nominasi SEHATI')
@@ -1843,6 +1758,7 @@ function resetAllStatus(silent = false) {
     updateStatusBar();
     renderHistoryTab();
     renderSettingsTab();
+    updateAllWinnersButtonVisibility();
 
     // 5. Simpan ke IndexedDB & LocalStorage
     saveToStorage();

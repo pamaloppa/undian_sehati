@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Undian ASN SEHATI - BKPSDM</title>
     <link rel="icon" type="image/png" href="assets/logo_asn_sehati.png">
-    <link rel="stylesheet" href="css/style.css?v=3.1">
+    <link rel="stylesheet" href="css/style.css?v=3.2">
 </head>
 <body class="stage-active">
 
@@ -193,7 +193,7 @@
                         Panggung Spotlight
                     </button>
 
-                    <button class="btn-secondary" id="btn-show-all-winners" style="border-color: rgba(251, 191, 36, 0.45); color: #fbbf24;" onclick="openAllWinnersModal()">
+                    <button class="btn-secondary" id="btn-show-all-winners" style="display: none; border-color: rgba(251, 191, 36, 0.45); color: #fbbf24;" onclick="openAllWinnersModal()">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
                         Semua Pemenang (Layar Besar)
                     </button>
@@ -388,10 +388,6 @@
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                             Ekspor CSV / Excel
                         </button>
-                        <button class="btn-secondary" onclick="printOfficialReport()">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-                            Cetak Berita Acara Resmi
-                        </button>
                         <button class="btn-action danger" style="width: auto; padding: 8px 14px;" onclick="resetAllHistory()">
                             Reset Semua Riwayat
                         </button>
@@ -503,12 +499,8 @@
                 <button class="btn-draw-main" style="font-size: 0.95rem; padding: 10px 24px;" onclick="closeWinnerSpotlightModal()">
                     Tutup Tampilan Panggung
                 </button>
-                <button class="btn-secondary" style="border-color: rgba(251, 191, 36, 0.45); color: #fbbf24; font-size: 0.95rem; padding: 10px 22px;" onclick="closeWinnerSpotlightModal(); openAllWinnersModal();">
+                <button class="btn-secondary" id="btn-modal-show-all-winners" style="display: none; border-color: rgba(251, 191, 36, 0.45); color: #fbbf24; font-size: 0.95rem; padding: 10px 22px;" onclick="closeWinnerSpotlightModal(); openAllWinnersModal();">
                     🏆 Tampilkan Semua Pemenang (Layar Besar)
-                </button>
-                <button class="btn-secondary" onclick="printOfficialReport(AppState.winnersHistory[0]?.id)">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-                    Cetak Berita Acara
                 </button>
             </div>
         </div>
@@ -538,10 +530,6 @@
             <div class="all-winners-actions">
                 <button class="btn-draw-main" style="font-size: 0.95rem; padding: 10px 24px;" onclick="window.ConfettiManager && window.ConfettiManager.burst(350, true)">
                     🎉 Hujan Konfeti Perayaan
-                </button>
-                <button class="btn-secondary" style="border-color: rgba(251, 191, 36, 0.45); color: #fbbf24; font-size: 0.95rem; padding: 10px 24px;" onclick="printOfficialReport()">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-                    Cetak Berita Acara Pemenang
                 </button>
                 <button class="btn-secondary" style="font-size: 0.95rem; padding: 10px 24px;" onclick="closeAllWinnersModal()">
                     ✕ Tutup Layar Pemenang
@@ -635,13 +623,13 @@
         <source src="assets/grand_prize.mp3" type="audio/mpeg">
     </audio>
 
-    <!-- SCRIPT APPLICATION (Cache-busted v=3.1) -->
-    <script src="js/csv-parser.js?v=3.1"></script>
-    <script src="js/audio.js?v=3.1"></script>
-    <script src="js/confetti.js?v=3.1"></script>
-    <script src="js/db.js?v=3.1"></script>
-    <script src="js/peerjs.min.js?v=3.1"></script>
-    <script src="js/sync-p2p.js?v=3.1"></script>
-    <script src="js/app.js?v=3.1"></script>
+    <!-- SCRIPT APPLICATION (Cache-busted v=3.2) -->
+    <script src="js/csv-parser.js?v=3.2"></script>
+    <script src="js/audio.js?v=3.2"></script>
+    <script src="js/confetti.js?v=3.2"></script>
+    <script src="js/db.js?v=3.2"></script>
+    <script src="js/peerjs.min.js?v=3.2"></script>
+    <script src="js/sync-p2p.js?v=3.2"></script>
+    <script src="js/app.js?v=3.2"></script>
 </body>
 </html>
