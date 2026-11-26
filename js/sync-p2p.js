@@ -179,6 +179,24 @@ window.P2PSync = {
             return;
         }
 
+        if (packet && packet.type === 'UPDATE_SETTINGS') {
+            if (packet.settings && typeof packet.settings === 'object') {
+                window.AppState.settings = { ...window.AppState.settings, ...packet.settings };
+                if (typeof window.saveToStorage === 'function') window.saveToStorage();
+                if (typeof window.applyDisclaimerSettings === 'function') window.applyDisclaimerSettings();
+                if (typeof window.renderSettingsTab === 'function') window.renderSettingsTab();
+                const cutoff = window.AppState.settings.cutoffTime || '07.00 WIB';
+                this.showToast(`⚙️ Pengaturan Disclaimer Diperbarui!\nBatas Cut-off Jam: ${cutoff}`);
+            }
+            if (this.connection) {
+                this.connection.send({
+                    type: 'SYNC_SUCCESS',
+                    message: `Pengaturan Disclaimer di Layar Panggung berhasil diperbarui!`
+                });
+            }
+            return;
+        }
+
         // Jangan timpa jika panggung sedang memutar undian
         if (window.AppState.isRolling) {
             if (this.connection) {
@@ -361,6 +379,27 @@ window.P2PSync = {
         } catch (e) {
             console.error('Gagal mengirim data P2P:', e);
             this.showToast(`❌ Gagal mengirim data: ${e.message}`);
+            return false;
+        }
+    },
+
+    /**
+     * Siarkan khusus perubahan pengaturan (Cut-off disclaimer dsb) ke Layar Panggung
+     */
+    broadcastSettings: function() {
+        if (!this.isConnected || !this.connection) return false;
+        try {
+            const payload = {
+                type: 'UPDATE_SETTINGS',
+                settings: window.AppState.settings ? { ...window.AppState.settings } : {},
+                timestamp: Date.now()
+            };
+            this.connection.send(payload);
+            const cutoff = (window.AppState.settings && window.AppState.settings.cutoffTime) || '07.00 WIB';
+            this.showToast(`📤 Mengirim pengaturan cut-off (${cutoff}) ke Layar Panggung...`);
+            return true;
+        } catch (e) {
+            console.error('Gagal broadcast settings P2P:', e);
             return false;
         }
     },

@@ -2446,3 +2446,9 @@ body.menu-hidden .slot-name {
     border-radius: 12px;
     letter-spacing: 0.6px;
 }
+
+.disclaimer-cutoff-display {
+    color: var(--pegasus-gold);
+    font-weight: 800;
+    text-shadow: 0 0 10px rgba(251, 191, 36, 0.4);
+}

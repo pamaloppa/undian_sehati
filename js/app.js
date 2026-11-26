@@ -33,7 +33,8 @@ const AppState = {
         excludePreviousWinners: true,
         soundEnabled: true,
         rollDuration: 7000, // base duration in ms
-        dataSource: 'nominasi' // 'nominasi' or 'master'
+        dataSource: 'nominasi', // 'nominasi' or 'master'
+        cutoffTime: '07.00 WIB' // Batas jam aktivitas disclaimer
     }
 };
 
@@ -94,6 +95,9 @@ function loadFromLocalStorageSync() {
         const savedSettings = localStorage.getItem(STORAGE_KEYS.SETTINGS);
         if (savedSettings) {
             AppState.settings = { ...AppState.settings, ...JSON.parse(savedSettings) };
+        }
+        if (!AppState.settings.cutoffTime) {
+            AppState.settings.cutoffTime = '07.00 WIB';
         }
 
         // Pastikan icon dan data default prize selalu mutakhir
@@ -792,6 +796,14 @@ function goToNextPrize() {
 // ============================================================
 // RENDERING TAMPILAN (VIEWS)
 // ============================================================
+function applyDisclaimerSettings() {
+    const cutoff = (AppState.settings && AppState.settings.cutoffTime) ? AppState.settings.cutoffTime : '07.00 WIB';
+    document.querySelectorAll('.disclaimer-cutoff-display').forEach(el => {
+        el.textContent = cutoff;
+    });
+}
+window.applyDisclaimerSettings = applyDisclaimerSettings;
+
 function renderAllViews() {
     renderPrizeCards();
     updateDrawButtonLabel();
@@ -802,6 +814,7 @@ function renderAllViews() {
     renderHistoryTab();
     renderSettingsTab();
     updateAllWinnersButtonVisibility();
+    applyDisclaimerSettings();
 }
 
 function renderSlotPlaceholders(count = 1) {
@@ -1559,6 +1572,7 @@ function renderSettingsTab() {
     const toggleExclude = document.getElementById('setting-exclude-previous');
     const toggleSound = document.getElementById('setting-sound');
     const selectSource = document.getElementById('setting-data-source');
+    const inputCutoff = document.getElementById('setting-cutoff-time');
 
     if (inputDrawCount) inputDrawCount.value = AppState.settings.drawCount;
     if (inputPrizeName) inputPrizeName.value = AppState.settings.prizeName;
@@ -1567,6 +1581,7 @@ function renderSettingsTab() {
     if (toggleExclude) toggleExclude.checked = AppState.settings.excludePreviousWinners !== false;
     if (toggleSound) toggleSound.checked = AppState.settings.soundEnabled;
     if (selectSource) selectSource.value = AppState.settings.dataSource;
+    if (inputCutoff) inputCutoff.value = AppState.settings.cutoffTime || '07.00 WIB';
 
     // Sinkronkan input cepat di Stage Bar
     const quickPrize = document.getElementById('quick-prize-input');
@@ -1597,12 +1612,24 @@ function saveSettingsFromUI() {
     if (selectDuration) AppState.settings.rollDuration = parseInt(selectDuration.value) || 7000;
     if (selectSource) AppState.settings.dataSource = selectSource.value;
 
+    const inputCutoff = document.getElementById('setting-cutoff-time');
+    if (inputCutoff) {
+        AppState.settings.cutoffTime = inputCutoff.value.trim() || '07.00 WIB';
+    }
+
     if (window.soundEffects) {
         window.soundEffects.setEnabled(AppState.settings.soundEnabled);
     }
 
+    applyDisclaimerSettings();
     saveToStorage();
     renderAllViews();
+
+    // Broadcast ke Layar Panggung via P2P jika terhubung
+    if (window.P2PSync && typeof window.P2PSync.broadcastSettings === 'function') {
+        window.P2PSync.broadcastSettings();
+    }
+
     alert('Pengaturan berhasil disimpan!');
 }
 
@@ -1659,6 +1686,20 @@ function initEventListeners() {
             const stagePrizeBadge = document.getElementById('stage-prize-name-display');
             if (stagePrizeBadge) stagePrizeBadge.textContent = e.target.value;
             saveToStorage();
+        });
+    }
+
+    // Real-Time Cut-Off Time sync (Setiap ketikan langsung tampil di Panggung Laptop 1)
+    const inputCutoff = document.getElementById('setting-cutoff-time');
+    if (inputCutoff) {
+        inputCutoff.addEventListener('input', (e) => {
+            const val = e.target.value.trim() || '07.00 WIB';
+            AppState.settings.cutoffTime = val;
+            applyDisclaimerSettings();
+            saveToStorage();
+            if (window.P2PSync && typeof window.P2PSync.broadcastSettings === 'function') {
+                window.P2PSync.broadcastSettings();
+            }
         });
     }
 

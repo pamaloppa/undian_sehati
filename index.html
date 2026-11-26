@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Undian ASN SEHATI - BKPSDM</title>
     <link rel="icon" type="image/png" href="assets/logo_asn_sehati.png">
-    <link rel="stylesheet" href="css/style.css?v=3.4">
+    <link rel="stylesheet" href="css/style.css?v=3.5">
 </head>
 <body class="stage-active">
 
@@ -151,7 +151,7 @@
                     <span>DISCLAIMER</span>
                 </div>
                 <div class="sdb-content">
-                    Peserta yang masuk nominasi undian ini adalah <strong>ASN yang melakukan aktivitas di Aplikasi ASN SEHATI</strong> dengan pencatatan aktivitas yang ditutup <strong>sampai pukul 07.00 WIB</strong>.
+                    Peserta yang masuk nominasi undian ini adalah <strong>ASN yang melakukan aktivitas di Aplikasi ASN SEHATI</strong> dengan pencatatan aktivitas yang ditutup <strong>sampai pukul <span class="disclaimer-cutoff-display">07.00 WIB</span></strong>.
                 </div>
             </div>
 
@@ -351,7 +351,7 @@
                         <div class="ndb-icon">⚠️</div>
                         <div class="ndb-body">
                             <strong>Ketentuan / Disclaimer Nominasi Pemenang:</strong>
-                            <p>Peserta yang berhak masuk dalam nominasi undian ini adalah <strong>ASN yang melakukan aktivitas di Aplikasi ASN SEHATI</strong> dengan batas pencatatan aktivitas yang ditutup (cut-off) <strong>sampai pukul 07.00 WIB</strong>.</p>
+                            <p>Peserta yang berhak masuk dalam nominasi undian ini adalah <strong>ASN yang melakukan aktivitas di Aplikasi ASN SEHATI</strong> dengan batas pencatatan aktivitas yang ditutup (cut-off) <strong>sampai pukul <span class="disclaimer-cutoff-display">07.00 WIB</span></strong>.</p>
                         </div>
                     </div>
 
@@ -441,6 +441,19 @@
                     <input type="number" id="setting-draw-count" class="form-control" min="1" max="10" value="1">
                 </div>
 
+                <div class="form-group" style="background: rgba(6, 182, 212, 0.08); border: 1.5px solid rgba(103, 232, 249, 0.35); border-radius: var(--border-radius-sm); padding: 14px 16px; margin-bottom: 18px;">
+                    <label style="color: var(--cyan-light); font-weight: 800; display: flex; align-items: center; gap: 8px; font-size: 0.95rem; margin-bottom: 6px;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        Jam Cut-Off Aktivitas Nominasi (Teks Disclaimer)
+                    </label>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <input type="text" id="setting-cutoff-time" class="form-control" style="font-weight: 700; color: #fbbf24; font-size: 1rem; letter-spacing: 0.5px;" value="07.00 WIB" placeholder="Contoh: 07.00 WIB atau 07:00">
+                    </div>
+                    <small style="color: #94a3b8; display: block; margin-top: 8px; font-size: 0.82rem; line-height: 1.4;">
+                        💡 <strong>Sinkronisasi Real-Time:</strong> Saat diubah di Laptop 2 (Admin), teks Disclaimer di Layar Panggung Laptop 1 akan langsung berubah seketika tanpa perlu memuat ulang halaman.
+                    </small>
+                </div>
+
                 
                 <div class="form-group">
                     <label>Durasi Pengacakan Undian (Efek Dramatis)</label>
@@ -511,7 +524,7 @@
             <h2 class="modal-title">SELAMAT KEPADA PEMENANG!</h2>
             <div class="modal-subtitle" id="modal-prize-title">Mesin Cuci</div>
             <div class="modal-spotlight-disclaimer">
-                ℹ️ Nominasi pemenang: ASN yang beraktivitas di Aplikasi ASN SEHATI (Aktivitas disetop s/d pukul 07.00 WIB)
+                ℹ️ Nominasi pemenang: ASN yang beraktivitas di Aplikasi ASN SEHATI (Aktivitas disetop s/d pukul <span class="disclaimer-cutoff-display">07.00 WIB</span>)
             </div>
 
             <div class="modal-winners-grid" id="modal-winners-grid">
@@ -544,7 +557,7 @@
                 <p class="all-winners-subtitle">Pemerintah Kabupaten Sumenep • Pengundian Sah & Terverifikasi ASN SEHATI</p>
                 <div class="all-winners-disclaimer-pill">
                     <span class="aw-disc-badge">DISCLAIMER</span>
-                    <span>Peserta nominasi adalah ASN yang beraktivitas di Aplikasi ASN SEHATI (Pencatatan aktivitas ditutup sampai pukul 07.00 WIB)</span>
+                    <span>Peserta nominasi adalah ASN yang beraktivitas di Aplikasi ASN SEHATI (Pencatatan aktivitas ditutup sampai pukul <span class="disclaimer-cutoff-display">07.00 WIB</span>)</span>
                 </div>
             </div>
 
@@ -650,13 +663,13 @@
         <source src="assets/grand_prize.mp3" type="audio/mpeg">
     </audio>
 
-    <!-- SCRIPT APPLICATION (Cache-busted v=3.4) -->
-    <script src="js/csv-parser.js?v=3.4"></script>
-    <script src="js/audio.js?v=3.4"></script>
-    <script src="js/confetti.js?v=3.4"></script>
-    <script src="js/db.js?v=3.4"></script>
-    <script src="js/peerjs.min.js?v=3.4"></script>
-    <script src="js/sync-p2p.js?v=3.4"></script>
-    <script src="js/app.js?v=3.4"></script>
+    <!-- SCRIPT APPLICATION (Cache-busted v=3.5) -->
+    <script src="js/csv-parser.js?v=3.5"></script>
+    <script src="js/audio.js?v=3.5"></script>
+    <script src="js/confetti.js?v=3.5"></script>
+    <script src="js/db.js?v=3.5"></script>
+    <script src="js/peerjs.min.js?v=3.5"></script>
+    <script src="js/sync-p2p.js?v=3.5"></script>
+    <script src="js/app.js?v=3.5"></script>
 </body>
 </html>
