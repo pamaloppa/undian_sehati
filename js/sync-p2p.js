@@ -22,16 +22,43 @@ window.P2PSync = {
         if (savedRoom) this.roomId = savedRoom;
 
         const savedRole = localStorage.getItem('SEHATI_P2P_ROLE');
-        // Secara default (atau jika bukan admin), langsung aktifkan penerima Panggung
-        if (savedRole !== 'admin') {
+        if (savedRole === 'stage') {
             this.startAsStage(this.roomId, false);
+        } else if (savedRole === 'admin') {
+            this.connectToStage(this.roomId);
+        } else {
+            this.updateUiStatus('disconnected', 'Pilih peran laptop ini di menu Sinkronisasi P2P (Laptop 1 atau 2).');
         }
+
+        // Lepas ID seketika di server PeerJS saat tab ditutup/di-refresh
+        window.addEventListener('beforeunload', () => {
+            if (this.peer) {
+                try { this.peer.destroy(); } catch (e) {}
+            }
+        });
+    },
+
+    /**
+     * Reset peran dan putus koneksi P2P
+     */
+    resetConnection: function() {
+        if (this.retryTimer) clearTimeout(this.retryTimer);
+        if (this.peer) {
+            try { this.peer.destroy(); } catch (e) {}
+        }
+        this.role = null;
+        this.connection = null;
+        this.isConnected = false;
+        localStorage.removeItem('SEHATI_P2P_ROLE');
+        this.updateUiStatus('disconnected', 'Koneksi P2P di-reset. Pilih peran laptop ini.');
+        this.showToast('🔄 Peran P2P di-reset. Silakan tentukan apakah laptop ini Laptop 1 (Panggung) atau Laptop 2 (Panitia).');
     },
 
     /**
      * Mode Laptop 1: Layar Panggung (Penerima Data)
      */
     startAsStage: function(customRoomId = 'SEHATI-BKPSDM', showFeedback = true) {
+        if (this.retryTimer) clearTimeout(this.retryTimer);
         this.role = 'stage';
         this.roomId = (customRoomId || 'SEHATI-BKPSDM').trim().toUpperCase();
         localStorage.setItem('SEHATI_P2P_ROOM', this.roomId);
@@ -63,7 +90,13 @@ window.P2PSync = {
             this.peer.on('error', (err) => {
                 console.warn('P2P Error:', err);
                 if (err.type === 'unavailable-id') {
-                    this.updateUiStatus('connected', `📡 Layar Panggung tersambung (ID: ${this.roomId})`);
+                    this.updateUiStatus('waiting', `⏳ ID sedang dilepas oleh server PeerJS. Menyambung ulang otomatis dalam 3 detik...`);
+                    if (this.retryTimer) clearTimeout(this.retryTimer);
+                    this.retryTimer = setTimeout(() => {
+                        if (this.role === 'stage') {
+                            this.startAsStage(this.roomId, false);
+                        }
+                    }, 3000);
                 } else {
                     this.updateUiStatus('error', `Koneksi P2P: ${err.message || err.type}`);
                 }
