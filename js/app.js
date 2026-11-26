@@ -605,11 +605,10 @@ function onAllSlotsLocked(winners) {
             btnNext.onclick = goToNextPrize;
             btnNext.style.display = 'inline-block';
         } else {
-            msgEl.innerHTML = `👑 <strong>SELAMAT KEPADA SELURUH PEMENANG!</strong><br>Puncak pengundian Grand Prize <strong>${currentPrize.name}</strong> & seluruh 5 hadiah utama telah berhasil diselesaikan! 🎊`;
-            btnNext.textContent = `Lihat Riwayat & Cetak Berita Acara 👉`;
-            btnNext.onclick = () => {
-                document.querySelector('.nav-tab-btn[data-tab="tab-history"]')?.click();
-            };
+            msgEl.innerHTML = `👑 <strong>SELAMAT KEPADA SELURUH PEMENANG JJS SUMENEP 2026!</strong><br>Seluruh 5 hadiah utama telah berhasil diundi! Tampilkan daftar lengkap pemenang di layar besar:`;
+            btnNext.textContent = `🏆 TAMPILKAN SEMUA PEMENANG (LAYAR BESAR) 👉`;
+            btnNext.onclick = openAllWinnersModal;
+            btnNext.style.display = 'inline-block';
         }
     }
 
@@ -1139,9 +1138,9 @@ function printOfficialReport(roundId = null) {
         <div class="print-header-layout">
             <img src="assets/logo_asn_sehati.png" class="print-logo-img" alt="Logo ASN SEHATI">
             <div class="print-header-text">
-                <h2>PEMERINTAH DAERAH</h2>
+                <h2>PEMERINTAH KABUPATEN SUMENEP</h2>
                 <h3>BADAN KEPEGAWAIAN DAN PENGEMBANGAN SUMBER DAYA MANUSIA (BKPSDM)</h3>
-                <p style="font-size: 0.95rem; font-weight: bold; margin-top: 4px; letter-spacing: 0.5px;">BERITA ACARA RESMI PENGUNDIAN PEMENANG ASN SEHATI</p>
+                <p style="font-size: 0.95rem; font-weight: bold; margin-top: 4px; letter-spacing: 0.5px;">BERITA ACARA RESMI PENGUNDIAN PEMENANG DOORPRIZE JJS SUMENEP 2026</p>
             </div>
         </div>
         <p style="font-size: 0.85rem; line-height: 1.6; margin-bottom: 16px;">
@@ -1304,6 +1303,125 @@ function openWinnerSpotlightModal(roundData) {
 
 function closeWinnerSpotlightModal() {
     const modal = document.getElementById('modal-spotlight');
+    if (modal) modal.classList.remove('active');
+
+    // Jika kelima kategori hadiah sudah diundi, otomatis buka Layar Akbar Semua Pemenang!
+    const allDrawn = AppState.prizes.every(p => AppState.winnersHistory.some(r => 
+        (r.prizeId && String(r.prizeId) === String(p.id)) || 
+        (r.prizeName && r.prizeName.toLowerCase().includes(p.name.toLowerCase()))
+    ));
+
+    if (allDrawn) {
+        setTimeout(() => {
+            openAllWinnersModal();
+        }, 400);
+    }
+}
+
+// ============================================================
+// MODAL AKBAR SELURUH PEMENANG (JJS SUMENEP 2026 - TAMPILAN BESAR)
+// ============================================================
+function openAllWinnersModal() {
+    const modal = document.getElementById('modal-all-winners');
+    const grid = document.getElementById('all-winners-stage-grid');
+    if (!modal || !grid) return;
+
+    // Daftar 5 hadiah resmi urut dari Hadiah Utama #1 Sepeda Listrik s/d Hadiah #5 Mesin Cuci
+    const prizesList = [
+        AppState.prizes.find(p => p.id === 'prize_1') || { id: 'prize_1', name: 'Sepeda Listrik', icon: '⚡🚲', num: 1, isGrandPrize: true },
+        AppState.prizes.find(p => p.id === 'prize_2') || { id: 'prize_2', name: 'Sepeda Lipat', icon: '🚲', num: 2, isGrandPrize: false },
+        AppState.prizes.find(p => p.id === 'prize_3') || { id: 'prize_3', name: 'Kulkas 2 Pintu', icon: '❄️', num: 3, isGrandPrize: false },
+        AppState.prizes.find(p => p.id === 'prize_4') || { id: 'prize_4', name: 'TV 32 Inch', icon: '📺', num: 4, isGrandPrize: false },
+        AppState.prizes.find(p => p.id === 'prize_5') || { id: 'prize_5', name: 'Mesin Cuci', icon: '🫧', num: 5, isGrandPrize: false }
+    ];
+
+    grid.innerHTML = '';
+
+    prizesList.forEach(prize => {
+        const roundsForPrize = AppState.winnersHistory.filter(r => 
+            (r.prizeId && String(r.prizeId) === String(prize.id)) || 
+            (r.prizeName && r.prizeName.toLowerCase().includes(prize.name.toLowerCase()))
+        );
+        const lastRound = roundsForPrize[0];
+        const winner = (lastRound && lastRound.winners && lastRound.winners[0]) || null;
+
+        const card = document.createElement('div');
+        const isGrand = prize.isGrandPrize;
+        card.className = isGrand ? 'all-winner-grand-card grand-prize-showcase' : 'all-winner-grand-card';
+
+        const rankBadgeText = isGrand ? '👑 HADIAH UTAMA #1' : `HADIAH #${prize.num}`;
+        const rankBadgeClass = isGrand ? 'aw-rank-pill grand' : 'aw-rank-pill';
+
+        if (winner) {
+            const photoHtml = winner.foto
+                ? `<img src="${winner.foto}" alt="${winner.nama}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                   <div class="aw-initials">${getInitials(winner.nama)}</div>`
+                : `<div class="aw-initials">${getInitials(winner.nama)}</div>`;
+
+            const jabInfo = [winner.jabatan, winner.pangkatGol].filter(Boolean).join(' • ');
+            const achieveBadge = (winner.keterangan && winner.keterangan !== 'Peserta Nominasi SEHATI')
+                ? `<div class="aw-step-badge">${winner.keterangan}</div>`
+                : '';
+
+            card.innerHTML = `
+                <div class="aw-card-header">
+                    <span class="${rankBadgeClass}">${rankBadgeText}</span>
+                    <span class="aw-status-tag sah">✓ SAH</span>
+                </div>
+                <div class="aw-prize-banner">
+                    <span class="aw-prize-icon">${prize.icon}</span>
+                    <span class="aw-prize-name">${prize.name}</span>
+                </div>
+                <div class="aw-avatar-wrap ${isGrand ? 'grand' : ''}">
+                    ${photoHtml}
+                </div>
+                <div class="aw-winner-body">
+                    <div class="aw-winner-name" title="${winner.nama}">${winner.nama}</div>
+                    <div class="aw-winner-nip">NIP: ${winner.nip || '-'}</div>
+                    <div class="aw-winner-opd" title="${winner.unitKerja || winner.opd || ''}">${winner.unitKerja || winner.opd || '-'}</div>
+                    <div class="aw-winner-jabatan">${jabInfo}</div>
+                    ${achieveBadge}
+                </div>
+            `;
+        } else {
+            card.innerHTML = `
+                <div class="aw-card-header">
+                    <span class="${rankBadgeClass}">${rankBadgeText}</span>
+                    <span class="aw-status-tag pending">Standby</span>
+                </div>
+                <div class="aw-prize-banner">
+                    <span class="aw-prize-icon">${prize.icon}</span>
+                    <span class="aw-prize-name">${prize.name}</span>
+                </div>
+                <div class="aw-avatar-wrap empty">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="12" cy="8" r="5"/>
+                        <path d="M20 21a8 8 0 1 0-16 0"/>
+                    </svg>
+                </div>
+                <div class="aw-winner-body">
+                    <div class="aw-winner-name" style="color: #64748b; font-size: 1rem;">Belum Diundi</div>
+                    <div class="aw-winner-nip" style="color: #475569;">NIP: ••••••••••••••••••</div>
+                    <div class="aw-winner-opd" style="color: #475569;">Menunggu giliran pengundian</div>
+                </div>
+            `;
+        }
+
+        grid.appendChild(card);
+    });
+
+    modal.classList.add('active');
+
+    if (window.soundEffects) {
+        window.soundEffects.playFanfare();
+    }
+    if (window.ConfettiManager) {
+        window.ConfettiManager.burst(300, true);
+    }
+}
+
+function closeAllWinnersModal() {
+    const modal = document.getElementById('modal-all-winners');
     if (modal) modal.classList.remove('active');
 }
 
@@ -1757,6 +1875,8 @@ window.renderNominasiTable = renderNominasiTable;
 window.renderMasterTable = renderMasterTable;
 window.resetAllStatus = resetAllStatus;
 window.loadFromLocalStorageSync = loadFromLocalStorageSync;
+window.openAllWinnersModal = openAllWinnersModal;
+window.closeAllWinnersModal = closeAllWinnersModal;
 window.getEligiblePool = getEligiblePool;
 
 // Sinkronisasi otomatis antar-tab dalam satu laptop/browser tanpa refresh

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Undian ASN SEHATI - BKPSDM</title>
     <link rel="icon" type="image/png" href="assets/logo_asn_sehati.png">
-    <link rel="stylesheet" href="css/style.css?v=3.0">
+    <link rel="stylesheet" href="css/style.css?v=3.1">
 </head>
 <body class="stage-active">
 
@@ -131,7 +131,7 @@
                         <img src="assets/logo_asn_sehati.png" alt="ASN SEHATI">
                     </div>
                     <div>
-                        <div class="event-banner-compact">BKPSDM GALA AWARDS & DOORPRIZE</div>
+                        <div class="event-banner-compact">JJS SUMENEP 2026</div>
                         <h2 class="stage-title-compact">PENGUNDIAN HADIAH ASN SEHATI</h2>
                     </div>
                 </div>
@@ -191,6 +191,11 @@
                     <button class="btn-secondary" id="btn-show-spotlight" style="display: none;" onclick="openWinnerSpotlightModal(AppState.winnersHistory[0])">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                         Panggung Spotlight
+                    </button>
+
+                    <button class="btn-secondary" id="btn-show-all-winners" style="border-color: rgba(251, 191, 36, 0.45); color: #fbbf24;" onclick="openAllWinnersModal()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        Semua Pemenang (Layar Besar)
                     </button>
 
                     <button class="btn-action danger" onclick="resetAllStatus()" title="Reset Semua Status Undian" style="width: auto; padding: 8px 18px; border-radius: 24px; font-size: 0.82rem; margin: 0; gap: 6px;">
@@ -495,12 +500,51 @@
             </div>
 
             <div style="display: flex; justify-content: center; gap: 12px; margin-top: 18px; flex-wrap: wrap;">
-                <button class="btn-draw-main" style="font-size: 0.95rem; padding: 10px 28px;" onclick="closeWinnerSpotlightModal()">
+                <button class="btn-draw-main" style="font-size: 0.95rem; padding: 10px 24px;" onclick="closeWinnerSpotlightModal()">
                     Tutup Tampilan Panggung
+                </button>
+                <button class="btn-secondary" style="border-color: rgba(251, 191, 36, 0.45); color: #fbbf24; font-size: 0.95rem; padding: 10px 22px;" onclick="closeWinnerSpotlightModal(); openAllWinnersModal();">
+                    🏆 Tampilkan Semua Pemenang (Layar Besar)
                 </button>
                 <button class="btn-secondary" onclick="printOfficialReport(AppState.winnersHistory[0]?.id)">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
                     Cetak Berita Acara
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MODAL AKBAR SELURUH PEMENANG (JJS SUMENEP 2026) ================= -->
+    <div class="modal-overlay" id="modal-all-winners">
+        <div class="modal-content modal-all-winners-content">
+            <button class="modal-close-btn" onclick="closeAllWinnersModal()">✕</button>
+
+            <!-- Header Showcase -->
+            <div class="all-winners-header">
+                <div class="all-winners-logo-wrap">
+                    <img src="assets/logo_asn_sehati.png" alt="ASN SEHATI">
+                </div>
+                <div class="all-winners-banner-badge">JJS SUMENEP 2026 • BKPSDM</div>
+                <h2 class="all-winners-main-title">🏆 DAFTAR LENGKAP SELURUH PEMENANG UNDIAN 🏆</h2>
+                <p class="all-winners-subtitle">Pemerintah Kabupaten Sumenep • Pengundian Sah & Terverifikasi ASN SEHATI</p>
+            </div>
+
+            <!-- Grid 5 Pemenang Hadiah Layar Besar -->
+            <div class="all-winners-stage-grid" id="all-winners-stage-grid">
+                <!-- Dynamically rendered by app.js -->
+            </div>
+
+            <!-- Kontrol Aksi Bawah Modal -->
+            <div class="all-winners-actions">
+                <button class="btn-draw-main" style="font-size: 0.95rem; padding: 10px 24px;" onclick="window.ConfettiManager && window.ConfettiManager.burst(350, true)">
+                    🎉 Hujan Konfeti Perayaan
+                </button>
+                <button class="btn-secondary" style="border-color: rgba(251, 191, 36, 0.45); color: #fbbf24; font-size: 0.95rem; padding: 10px 24px;" onclick="printOfficialReport()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                    Cetak Berita Acara Pemenang
+                </button>
+                <button class="btn-secondary" style="font-size: 0.95rem; padding: 10px 24px;" onclick="closeAllWinnersModal()">
+                    ✕ Tutup Layar Pemenang
                 </button>
             </div>
         </div>
@@ -591,13 +635,13 @@
         <source src="assets/grand_prize.mp3" type="audio/mpeg">
     </audio>
 
-    <!-- SCRIPT APPLICATION (Cache-busted v=3.0) -->
-    <script src="js/csv-parser.js?v=3.0"></script>
-    <script src="js/audio.js?v=3.0"></script>
-    <script src="js/confetti.js?v=3.0"></script>
-    <script src="js/db.js?v=3.0"></script>
-    <script src="js/peerjs.min.js?v=3.0"></script>
-    <script src="js/sync-p2p.js?v=3.0"></script>
-    <script src="js/app.js?v=3.0"></script>
+    <!-- SCRIPT APPLICATION (Cache-busted v=3.1) -->
+    <script src="js/csv-parser.js?v=3.1"></script>
+    <script src="js/audio.js?v=3.1"></script>
+    <script src="js/confetti.js?v=3.1"></script>
+    <script src="js/db.js?v=3.1"></script>
+    <script src="js/peerjs.min.js?v=3.1"></script>
+    <script src="js/sync-p2p.js?v=3.1"></script>
+    <script src="js/app.js?v=3.1"></script>
 </body>
 </html>
