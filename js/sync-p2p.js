@@ -22,7 +22,8 @@ window.P2PSync = {
         if (savedRoom) this.roomId = savedRoom;
 
         const savedRole = localStorage.getItem('SEHATI_P2P_ROLE');
-        if (savedRole === 'stage') {
+        // Secara default (atau jika bukan admin), langsung aktifkan penerima Panggung
+        if (savedRole !== 'admin') {
             this.startAsStage(this.roomId, false);
         }
     },

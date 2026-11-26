@@ -106,7 +106,7 @@ function loadFromLocalStorageSync() {
     }
 }
 
-async function hydrateFromIndexedDB() {
+async function hydrateFromIndexedDB(force = false) {
     if (!window.AppDB || !window.AppDB.isReady) return;
     try {
         const idbMaster = await window.AppDB.load('MASTER_PEGAWAI');
@@ -114,15 +114,15 @@ async function hydrateFromIndexedDB() {
         const idbWinners = await window.AppDB.load('WINNERS');
 
         let shouldReRender = false;
-        if (idbMaster && Array.isArray(idbMaster) && idbMaster.length > AppState.masterPegawai.length) {
+        if (idbMaster && Array.isArray(idbMaster) && (force || idbMaster.length !== AppState.masterPegawai.length || AppState.masterPegawai.length === 0)) {
             AppState.masterPegawai = idbMaster;
             shouldReRender = true;
         }
-        if (idbNominasi && Array.isArray(idbNominasi) && idbNominasi.length > AppState.nominasi.length) {
+        if (idbNominasi && Array.isArray(idbNominasi) && (force || idbNominasi.length !== AppState.nominasi.length || AppState.nominasi.length === 0)) {
             AppState.nominasi = idbNominasi;
             shouldReRender = true;
         }
-        if (idbWinners && Array.isArray(idbWinners) && idbWinners.length > AppState.winnersHistory.length) {
+        if (idbWinners && Array.isArray(idbWinners) && (force || idbWinners.length !== AppState.winnersHistory.length)) {
             AppState.winnersHistory = idbWinners;
             shouldReRender = true;
         }
@@ -137,23 +137,53 @@ async function hydrateFromIndexedDB() {
 }
 
 function saveToStorage() {
+    // 1. Simpan konfigurasi kecil ke LocalStorage (pasti berhasil, hanya beberapa byte)
+    try { localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(AppState.settings)); } catch (e) {}
+    try { localStorage.setItem(STORAGE_KEYS.SELECTED_PRIZE, AppState.selectedPrizeId); } catch (e) {}
+    try { localStorage.setItem(STORAGE_KEYS.WINNERS, JSON.stringify(AppState.winnersHistory)); } catch (e) {}
+
+    // 2. Nominasi ke LocalStorage jika ukurannya wajar (< 1000 baris)
     try {
-        localStorage.setItem(STORAGE_KEYS.MASTER, JSON.stringify(AppState.masterPegawai));
-        localStorage.setItem(STORAGE_KEYS.NOMINASI, JSON.stringify(AppState.nominasi));
-        localStorage.setItem(STORAGE_KEYS.WINNERS, JSON.stringify(AppState.winnersHistory));
-        localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(AppState.settings));
-        localStorage.setItem(STORAGE_KEYS.SELECTED_PRIZE, AppState.selectedPrizeId);
+        if (AppState.nominasi.length <= 1000) {
+            localStorage.setItem(STORAGE_KEYS.NOMINASI, JSON.stringify(AppState.nominasi));
+        } else {
+            localStorage.removeItem(STORAGE_KEYS.NOMINASI);
+        }
     } catch (e) {
-        console.warn('LocalStorage kuota terbatas:', e);
+        localStorage.removeItem(STORAGE_KEYS.NOMINASI);
     }
 
-    // Simpan ke IndexedDB (Penyimpanan database permanen tak terbatas)
+    // 3. Master Pegawai: ribuan baris dengan 50 kolom (melebihi 5MB kuota LocalStorage)
+    // Jangan biarkan mengunci kuota 5MB LocalStorage browser!
+    try {
+        if (AppState.masterPegawai.length <= 200) {
+            localStorage.setItem(STORAGE_KEYS.MASTER, JSON.stringify(AppState.masterPegawai));
+        } else {
+            localStorage.removeItem(STORAGE_KEYS.MASTER);
+        }
+    } catch (e) {
+        localStorage.removeItem(STORAGE_KEYS.MASTER);
+    }
+
+    // 4. Simpan SEMUA data (Master, Nominasi, Riwayat) ke IndexedDB permanen (Kapasitas Tak Terbatas!)
     if (window.AppDB && window.AppDB.isReady) {
         window.AppDB.save('MASTER_PEGAWAI', AppState.masterPegawai);
         window.AppDB.save('NOMINASI', AppState.nominasi);
         window.AppDB.save('WINNERS', AppState.winnersHistory);
         window.AppDB.save('SETTINGS', AppState.settings);
     }
+
+    // 5. Siarkan ke tab / jendela lain di browser yang sama via BroadcastChannel
+    try {
+        if (window.SehatiBroadcast) {
+            window.SehatiBroadcast.postMessage({
+                type: 'LOCAL_DATA_CHANGED',
+                timestamp: Date.now(),
+                masterCount: AppState.masterPegawai.length,
+                nominasiCount: AppState.nominasi.length
+            });
+        }
+    } catch (e) {}
 }
 
 function handleBackupRestore(event) {
@@ -1629,3 +1659,19 @@ window.addEventListener('storage', (e) => {
         renderAllViews();
     }
 });
+
+// Kanal sinkronisasi instan antar-tab / multi-jendela di komputer yang sama (Chrome, Edge, Firefox)
+if (typeof BroadcastChannel !== 'undefined') {
+    window.SehatiBroadcast = new BroadcastChannel('SEHATI_LIVE_CHANNEL');
+    window.SehatiBroadcast.onmessage = async (event) => {
+        if (event.data && event.data.type === 'LOCAL_DATA_CHANGED') {
+            console.log('[BROADCAST-CHANNEL] Menerima pembaruan data dari jendela lain!');
+            if (window.AppDB && window.AppDB.isReady) {
+                await hydrateFromIndexedDB(true);
+            } else {
+                loadFromLocalStorageSync();
+                renderAllViews();
+            }
+        }
+    };
+}

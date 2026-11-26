@@ -64,10 +64,6 @@ window.AppDB = {
                 store.put({ key: key, value: data, updatedAt: new Date().toISOString() });
                 
                 tx.oncomplete = function() {
-                    // Simpan juga salinan ringkas di localStorage sebagai cadangan ganda
-                    try {
-                        localStorage.setItem('SEHATI_' + key, JSON.stringify(data));
-                    } catch (e) {}
                     resolve(true);
                 };
 
