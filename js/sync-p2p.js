@@ -228,26 +228,53 @@ window.P2PSync = {
 
     /**
      * Mengirimkan data saat ini dari Laptop 2 ke Laptop 1
+     * Mendukung pengiriman per-kategori ('ALL', 'NOMINASI', 'MASTER')
      */
-    broadcastCurrentData: function() {
+    broadcastCurrentData: function(scope = 'ALL') {
         if (!this.connection || !this.isConnected) {
+            this.showToast('⚠️ Belum terhubung ke Laptop Layar Panggung. Silakan klik Sambungkan terlebih dahulu.');
             return false;
         }
 
         try {
-            const payload = {
-                type: 'SYNC_ALL',
-                timestamp: Date.now(),
-                masterPegawai: window.AppState.masterPegawai,
-                nominasi: window.AppState.nominasi,
-                settings: window.AppState.settings
+            const cleanArray = (arr) => {
+                if (!Array.isArray(arr)) return [];
+                return arr.map(item => {
+                    const copy = { ...item };
+                    if (copy.raw && typeof copy.raw === 'object') {
+                        copy.raw = { ...copy.raw };
+                    }
+                    return copy;
+                });
             };
 
-            this.connection.send(payload);
-            this.showToast(`📤 Mengirim data (${payload.nominasi.length} Nominasi) ke Panggung...`);
+            const payload = {
+                type: scope === 'NOMINASI' ? 'SYNC_NOMINASI' : (scope === 'MASTER' ? 'SYNC_MASTER' : 'SYNC_ALL'),
+                timestamp: Date.now()
+            };
+
+            if (scope === 'ALL' || scope === 'MASTER') {
+                payload.masterPegawai = cleanArray(window.AppState.masterPegawai);
+            }
+            if (scope === 'ALL' || scope === 'NOMINASI') {
+                payload.nominasi = cleanArray(window.AppState.nominasi);
+            }
+            if (scope === 'ALL') {
+                payload.settings = window.AppState.settings ? { ...window.AppState.settings } : {};
+            }
+
+            // Sanitasi objek murni untuk memastikan bebas dari referensi siklis
+            const sanitized = JSON.parse(JSON.stringify(payload));
+            this.connection.send(sanitized);
+
+            let desc = [];
+            if (sanitized.nominasi) desc.push(`${sanitized.nominasi.length} Nominasi`);
+            if (sanitized.masterPegawai) desc.push(`${sanitized.masterPegawai.length} Master Pegawai`);
+            this.showToast(`📤 Mengirim data (${desc.join(' & ') || 'Data'}) ke Panggung...`);
             return true;
         } catch (e) {
             console.error('Gagal mengirim data P2P:', e);
+            this.showToast(`❌ Gagal mengirim data: ${e.message}`);
             return false;
         }
     },

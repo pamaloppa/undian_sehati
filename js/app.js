@@ -1259,7 +1259,7 @@ function handleMasterFileUpload(file) {
             updateStatusBar();
 
             if (window.P2PSync && window.P2PSync.isConnected) {
-                window.P2PSync.broadcastCurrentData();
+                window.P2PSync.broadcastCurrentData('MASTER');
             }
 
             alert(`✅ Berhasil mengunggah ${normalized.length} data ke Database Pegawai Master!`);
@@ -1290,7 +1290,7 @@ function handleNominasiFileUpload(file) {
             updateStatusBar();
 
             if (window.P2PSync && window.P2PSync.isConnected) {
-                window.P2PSync.broadcastCurrentData();
+                window.P2PSync.broadcastCurrentData('NOMINASI');
             }
 
             const matchCount = enriched.filter(n => n.isMatched).length;
