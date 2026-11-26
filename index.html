@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Undian ASN SEHATI - BKPSDM</title>
+    <link rel="icon" type="image/png" href="assets/logo_asn_sehati.png">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="stage-active">
+
+    <!-- Sorotan Cahaya Panggung (Stage Spotlight Effect) -->
+    <div class="stage-spotlight"></div>
+
+    <!-- Floating Menu Button saat Menu Navigasi Disembunyikan -->
+    <button class="floating-menu-btn" id="floating-menu-btn" onclick="toggleMenuVisibility()" title="Tampilkan Kembali Menu Navigasi (Tombol H / M)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        <span>Tampilkan Menu</span>
+    </button>
+
+    <div class="app-container">
+        
+        <!-- ================= NAVBAR DENGAN LOGO RESMI ASN SEHATI ================= -->
+        <header class="navbar" id="main-navbar">
+            <div class="brand">
+                <div class="brand-logo-wrap">
+                    <img src="assets/logo_asn_sehati.png" alt="Logo ASN SEHATI" class="brand-logo-img">
+                </div>
+                <div class="brand-text">
+                    <h1>UNDIAN ASN SEHATI</h1>
+                    <div class="brand-subtitle-wrap">
+                        <span>BKPSDM APARATUR PEMERINTAH</span>
+                        <span class="brand-badge">EDISI SEHATI</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Navigasi -->
+            <nav class="nav-tabs">
+                <button class="nav-tab-btn active" data-tab="tab-stage">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                    Panggung Undian
+                </button>
+                <button class="nav-tab-btn" data-tab="tab-master">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    Database Pegawai
+                </button>
+                <button class="nav-tab-btn" data-tab="tab-nominasi">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                    Data Nominasi
+                </button>
+                <button class="nav-tab-btn" data-tab="tab-history">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="9"/></svg>
+                    Riwayat Pemenang
+                </button>
+                <button class="nav-tab-btn" data-tab="tab-settings">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                    Pengaturan
+                </button>
+            </nav>
+
+            <!-- Aksi Header: Sembunyikan Menu, Audio & Fullscreen -->
+            <div class="header-actions">
+                <button class="icon-btn highlight" id="btn-sync-modal" onclick="openSyncModal()" title="Sinkronisasi 2 Laptop (P2P Real-Time)" style="width: auto; padding: 0 12px; gap: 6px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+                    <span style="font-size: 0.8rem; font-weight: 600;">Sambung Laptop</span>
+                    <span id="nav-sync-badge" style="display:none; font-size:0.75rem; font-weight:bold; margin-left:2px;">🟢</span>
+                </button>
+                <button class="icon-btn" onclick="resetAllStatus()" title="Reset Semua Status Undian" style="border-color: rgba(239, 68, 68, 0.4); color: #fca5a5;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><polyline points="3 3 3 8 8 8"/></svg>
+                </button>
+                <button class="icon-btn highlight" id="btn-toggle-menu" onclick="toggleMenuVisibility()" title="Sembunyikan Menu (Mode Panggung Penuh)">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                </button>
+                <button class="icon-btn" id="btn-toggle-sound" title="Suara Aktif (Klik untuk Mematikan)">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                </button>
+                <button class="icon-btn" id="btn-toggle-fullscreen" title="Mode Layar Penuh / Proyektor (F11)">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- ================= STATUS BAR STATISTIK ================= -->
+        <section class="status-bar" id="main-status-bar">
+            <div class="stats-group">
+                <div class="stat-item">
+                    <div class="stat-badge blue">👥</div>
+                    <div class="stat-info">
+                        <div class="stat-label">Database Pegawai</div>
+                        <div class="stat-value" id="stat-total-master">0</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-badge gold">📋</div>
+                    <div class="stat-info">
+                        <div class="stat-label">Total Nominasi</div>
+                        <div class="stat-value" id="stat-total-nominasi">0</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-badge green">🎯</div>
+                    <div class="stat-info">
+                        <div class="stat-label">Siap Diundi</div>
+                        <div class="stat-value" id="stat-eligible">0</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-badge purple">🏆</div>
+                    <div class="stat-info">
+                        <div class="stat-label">Pemenang Terpilih</div>
+                        <div class="stat-value" id="stat-won">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Prize Name Modifier on Stage -->
+            <div class="quick-prize-bar" style="display: none;">
+                <label>Nama Hadiah:</label>
+                <input type="text" id="quick-prize-input" value="Sepeda Listrik">
+            </div>
+        </section>
+
+        <!-- ================= TAB 1: PANGGUNG UNDIAN (100VH ZERO-SCROLL) ================= -->
+        <main class="tab-content active" id="tab-stage">
+            
+            <!-- Compact Header Stage -->
+            <div class="stage-hero-compact">
+                <div class="stage-hero-brand">
+                    <div class="stage-emblem-compact">
+                        <img src="assets/logo_asn_sehati.png" alt="ASN SEHATI">
+                    </div>
+                    <div>
+                        <div class="event-banner-compact">BKPSDM GALA AWARDS & DOORPRIZE</div>
+                        <h2 class="stage-title-compact">PENGUNDIAN HADIAH ASN SEHATI</h2>
+                    </div>
+                </div>
+
+                <!-- Heartbeat ECG Pulse Line Motif Compact -->
+                <div class="heartbeat-pulse-motif-compact">
+                    <svg class="pulse-line-svg-compact" viewBox="0 0 180 20">
+                        <path d="M0,10 L50,10 L62,2 L74,18 L84,0 L94,20 L104,5 L114,10 L180,10" />
+                    </svg>
+                </div>
+            </div>
+
+            <!-- ================= PILIHAN 5 HADIAH UTAMA (BERGANTIAN - 1 PER HADIAH) ================= -->
+            <section class="prize-selection-section">
+                <div class="prize-section-header-compact">
+                    <div class="prize-section-title">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        PILIH HADIAH (DIUNDI BERGANTIAN — 1 PEMENANG PER HADIAH):
+                    </div>
+                    <div class="active-prize-pill-display">
+                        Sedang Diundi: <strong id="stage-prize-name-display" class="prize-highlight-badge">Sepeda Listrik</strong>
+                    </div>
+                </div>
+
+                <!-- 5 Kartu Pilihan Hadiah Utama Compact Horizontal -->
+                <div class="prize-cards-grid" id="prize-cards-grid">
+                    <!-- Dynamic rendering by app.js -->
+                </div>
+            </section>
+
+            <!-- Notifikasi Lanjut ke Hadiah Berikutnya -->
+            <div class="next-prize-prompt" id="next-prize-prompt">
+                <div id="next-prize-message">Selamat! Pemenang telah ditentukan.</div>
+                <button id="btn-next-prize" onclick="goToNextPrize()">Lanjut ke Hadiah Berikutnya 👉</button>
+            </div>
+
+            <!-- ================= SINGLE GRAND LUCKY SLOT CARD (CENTER STAGE) ================= -->
+            <div class="slots-container single-slot" id="slots-container">
+                <!-- Slot card rendered by app.js -->
+            </div>
+
+            <!-- ================= KONTROL UTAMA PANGGUNG (COMPACT FOOTER) ================= -->
+            <div class="stage-controls-compact">
+                <div class="stage-btn-group">
+                    <button class="btn-draw-main btn-draw-compact" id="btn-start-draw" onclick="startDraw()">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="2" width="20" height="20" rx="5"/>
+                            <circle cx="7.5" cy="7.5" r="1.5" fill="currentColor"/>
+                            <circle cx="16.5" cy="7.5" r="1.5" fill="currentColor"/>
+                            <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
+                            <circle cx="7.5" cy="16.5" r="1.5" fill="currentColor"/>
+                            <circle cx="16.5" cy="16.5" r="1.5" fill="currentColor"/>
+                        </svg>
+                        <span id="btn-draw-label">MULAI UNDI: SEPEDA LISTRIK</span>
+                    </button>
+                    
+                    <button class="btn-secondary" id="btn-show-spotlight" style="display: none;" onclick="openWinnerSpotlightModal(AppState.winnersHistory[0])">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                        Panggung Spotlight
+                    </button>
+
+                    <button class="btn-action danger" onclick="resetAllStatus()" title="Reset Semua Status Undian" style="width: auto; padding: 8px 18px; border-radius: 24px; font-size: 0.82rem; margin: 0; gap: 6px;">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><polyline points="3 3 3 8 8 8"/></svg>
+                        Reset Semua Status
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- ================= TAB 2: DATABASE PEGAWAI MASTER ================= -->
+        <section class="tab-content" id="tab-master">
+            <div class="management-grid">
+                <!-- Panel Unggah Pegawai Master -->
+                <div class="card-panel">
+                    <h3 class="panel-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        Unggah Database Pegawai
+                    </h3>
+                    <p class="panel-desc">
+                        Unggah master data seluruh pegawai BKPSDM/Pemerintah Daerah (Format CSV). Data ini digunakan sebagai basis data utama untuk melengkapi informasi nominasi.
+                    </p>
+
+                    <div class="dropzone" id="dropzone-master">
+                        <input type="file" id="input-file-master" accept=".csv,text/csv">
+                        <div class="dropzone-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        </div>
+                        <div class="dropzone-text">Pilih File CSV Pegawai</div>
+                        <div class="dropzone-hint">atau seret & lepaskan file di sini (Separator , atau ;)</div>
+                    </div>
+
+                    <div class="panel-actions">
+                        <button class="btn-action demo" onclick="loadDemoMaster()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                            Gunakan Data Contoh Pegawai (Demo)
+                        </button>
+                        <button class="btn-action danger" onclick="clearMasterData()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                            Kosongkan Database Master
+                        </button>
+                    </div>
+
+                    <div class="alert-box info" style="margin-top: 14px;">
+                        <div>
+                            <strong>Format CSV Master Pegawai Didukung:</strong><br>
+                            <code>"id";"peg_id";"nip";"nama";"opd";"jabatan";"glrdpn";"glrblkng";...</code><br>
+                            <span style="font-size: 0.8rem; color: var(--text-dim);">(Otomatis membaca 50 kolom CSV BKPSDM dengan pemisah <code>;</code> atau <code>,</code>)</span>
+                        </div>
+                    </div>
+
+                    <!-- Status Database Permanen & Cadangan -->
+                    <div class="alert-box" style="margin-top: 14px; background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.4); color: #6ee7b7;">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        <div>
+                            <strong>Penyimpanan Database Permanen Aktif:</strong><br>
+                            Data tersimpan di mesin database browser (IndexedDB). Sekali unggah, data <strong>terus menempel permanen</strong> tanpa hilang meski komputer dimatikan atau browser ditutup.
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 8px; margin-top: 10px;">
+                        <button class="btn-action demo" style="font-size: 0.76rem; padding: 7px 10px;" onclick="window.AppDB?.exportBackup()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            Cadangkan Database
+                        </button>
+                        <label class="btn-action demo" style="font-size: 0.76rem; padding: 7px 10px; cursor: pointer; margin-bottom: 0;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                            Pulihkan Cadangan
+                            <input type="file" accept=".json" style="display: none;" onchange="handleBackupRestore(event)">
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Panel Tabel Pegawai Master -->
+                <div class="card-panel">
+                    <div class="table-toolbar">
+                        <div class="search-input-wrap">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            <input type="text" id="search-master" placeholder="Cari NIP, nama, unit kerja...">
+                        </div>
+                        <span class="cell-badge matched" id="master-count-badge">0 Data</span>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="custom-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 45px;">No</th>
+                                    <th>NIP</th>
+                                    <th>Nama Pegawai & Gelar</th>
+                                    <th>Unit Kerja / OPD</th>
+                                    <th>Jabatan & Pangkat/Gol</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-master">
+                                <!-- Data rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= TAB 3: DATA NOMINASI UNDIAN ================= -->
+        <section class="tab-content" id="tab-nominasi">
+            <div class="management-grid">
+                <!-- Panel Unggah Nominasi -->
+                <div class="card-panel">
+                    <h3 class="panel-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                        Unggah Data Nominasi
+                    </h3>
+                    <p class="panel-desc">
+                        Unggah file CSV peserta yang dinominasikan untuk pengundian hadiah. NIP akan otomatis dicocokkan dengan Database Pegawai Master.
+                    </p>
+
+                    <div class="dropzone" id="dropzone-nominasi">
+                        <input type="file" id="input-file-nominasi" accept=".csv,text/csv">
+                        <div class="dropzone-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        </div>
+                        <div class="dropzone-text">Pilih File CSV Nominasi</div>
+                        <div class="dropzone-hint">atau seret & lepaskan file di sini</div>
+                    </div>
+
+                    <div class="panel-actions">
+                        <button class="btn-action demo" onclick="loadDemoNominasi()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                            Gunakan Data Contoh Nominasi (Demo)
+                        </button>
+                        <button class="btn-action danger" onclick="clearNominasiData()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                            Kosongkan Data Nominasi
+                        </button>
+                    </div>
+
+                    <!-- Sync Status Alert -->
+                    <div class="alert-box" id="nominasi-match-alert" style="display: none;"></div>
+
+                    <div class="alert-box info" style="margin-top: 12px;">
+                        <div>
+                            <strong>Format Kolom Nominasi ASN SEHATI:</strong><br>
+                            <code>"employee_nip","day","unit_id","steps","calories","updated_at"</code><br>
+                            <span style="font-size: 0.8rem; color: var(--text-dim);">(Kolom <code>employee_nip</code> otomatis dipasangkan dengan NIP Master Pegawai untuk profil lengkap)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Panel Tabel Nominasi -->
+                <div class="card-panel">
+                    <div class="table-toolbar">
+                        <div class="search-input-wrap">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            <input type="text" id="search-nominasi" placeholder="Cari NIP, nama, kategori...">
+                        </div>
+                        <span class="cell-badge matched" id="nominasi-count-badge">0 Peserta</span>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="custom-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 45px;">No</th>
+                                    <th>NIP</th>
+                                    <th>Nama Peserta (Master)</th>
+                                    <th>Unit Kerja / OPD</th>
+                                    <th>Capaian Tantangan SEHATI</th>
+                                    <th>Status Master</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-nominasi">
+                                <!-- Data rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= TAB 4: RIWAYAT PEMENANG ================= -->
+        <section class="tab-content" id="tab-history">
+            <div class="card-panel">
+                <div class="table-toolbar">
+                    <h3 class="panel-title">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+                        Daftar Pemenang Hadiah Per Putaran
+                    </h3>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <button class="btn-secondary" onclick="exportWinnersCSV()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            Ekspor CSV / Excel
+                        </button>
+                        <button class="btn-secondary" onclick="printOfficialReport()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                            Cetak Berita Acara Resmi
+                        </button>
+                        <button class="btn-action danger" style="width: auto; padding: 8px 14px;" onclick="resetAllHistory()">
+                            Reset Semua Riwayat
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div id="history-empty-state" style="text-align: center; padding: 40px 20px; color: var(--text-dim); display: none;">
+                    <div style="font-size: 2.5rem; margin-bottom: 8px;">🏆</div>
+                    <h4 style="font-size: 1.1rem; color: #94d2bd; margin-bottom: 4px;">Belum Ada Riwayat Undian</h4>
+                    <p style="font-size: 0.85rem;">Pemenang dari setiap putaran undian di Panggung akan otomatis tersimpan di sini.</p>
+                </div>
+
+                <!-- List of Rounds -->
+                <div id="history-rounds-list">
+                    <!-- Dynamic round cards -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= TAB 5: PENGATURAN ================= -->
+        <section class="tab-content" id="tab-settings">
+            <div class="card-panel" style="max-width: 720px; margin: 0 auto;">
+                <h3 class="panel-title" style="margin-bottom: 16px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                    Konfigurasi Sistem Undian ASN SEHATI
+                </h3>
+
+                <div class="form-group" style="display: none;">
+                    <label>Jumlah Pemenang per Putaran</label>
+                    <input type="number" id="setting-draw-count" class="form-control" min="1" max="10" value="1">
+                </div>
+
+                
+                <div class="form-group">
+                    <label>Durasi Pengacakan Undian (Efek Dramatis)</label>
+                    <select id="setting-roll-duration" class="form-control">
+                        <option value="5000">5 Detik (Cepat)</option>
+                        <option value="7000" selected>7 Detik (Dramatis - Rekomendasi)</option>
+                        <option value="10000">10 Detik (Sangat Menegangkan)</option>
+                        <option value="12000">12 Detik (Maksimal)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Sumber Data Pengundian</label>
+                    <select id="setting-data-source" class="form-control">
+                        <option value="nominasi">Hanya dari Data Nominasi Terunggah (Rekomendasi)</option>
+                        <option value="master">Dari Seluruh Database Pegawai Master Langsung</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <div class="form-toggle">
+                        <span>Kecualikan Pemenang Sebelumnya (Tidak Menang Berulang)</span>
+                        <input type="checkbox" id="setting-exclude-previous" checked style="transform: scale(1.3); cursor: pointer;">
+                    </div>
+                    <small style="color: #94a3b8; display: block; margin-top: 4px;">Pemenang hadiah sebelumnya otomatis tidak akan terpilih lagi untuk hadiah berikutnya.</small>
+                </div>
+
+                <div class="form-group">
+                    <div class="form-toggle">
+                        <span>Aktifkan Efek Suara (Web Audio Synthesizer)</span>
+                        <input type="checkbox" id="setting-sound" checked style="transform: scale(1.3); cursor: pointer;">
+                    </div>
+                </div>
+
+                <button class="btn-draw-main" style="width: 100%; justify-content: center; font-size: 1.05rem; padding: 12px;" onclick="saveSettingsFromUI()">
+                    Simpan Pengaturan
+                </button>
+                <div style="margin-top: 24px; padding-top: 18px; border-top: 1px solid rgba(239, 68, 68, 0.3);">
+                    <h4 style="color: #f87171; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                        Reset Status Undian
+                    </h4>
+                    <p style="font-size: 0.82rem; color: var(--text-dim); margin-bottom: 12px; line-height: 1.5;">
+                        Mengosongkan seluruh riwayat pemenang dan mengembalikan posisi pengundian ke hadiah pertama (Sepeda Listrik). Data Master Pegawai & Nominasi <strong>tetap aman tersimpan</strong>.
+                    </p>
+                    <button class="btn-action danger" style="width: 100%; justify-content: center; padding: 10px;" onclick="resetAllStatus()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><polyline points="3 3 3 8 8 8"/></svg>
+                        Reset Semua Status Undian (Mulai dari Awal)
+                    </button>
+                </div>
+
+            </div>
+        </section>
+
+    </div>
+
+    <!-- ================= MODAL SPOTLIGHT PEMENANG ASN SEHATI ================= -->
+    <div class="modal-overlay" id="modal-spotlight">
+        <div class="modal-content">
+            <button class="modal-close-btn" onclick="closeWinnerSpotlightModal()">✕</button>
+            
+            <!-- Emblem Logo ASN SEHATI -->
+            <div class="modal-logo-wrap">
+                <img src="assets/logo_asn_sehati.png" alt="ASN SEHATI">
+            </div>
+
+            <div class="modal-header-badge">SAH & TERVERIFIKASI BKPSDM</div>
+            <h2 class="modal-title">SELAMAT KEPADA PEMENANG!</h2>
+            <div class="modal-subtitle" id="modal-prize-title">Sepeda Listrik</div>
+
+            <div class="modal-winners-grid" id="modal-winners-grid">
+                <!-- 1 single modal winner card -->
+            </div>
+
+            <div style="display: flex; justify-content: center; gap: 12px; margin-top: 18px; flex-wrap: wrap;">
+                <button class="btn-draw-main" style="font-size: 0.95rem; padding: 10px 28px;" onclick="closeWinnerSpotlightModal()">
+                    Tutup Tampilan Panggung
+                </button>
+                <button class="btn-secondary" onclick="printOfficialReport(AppState.winnersHistory[0]?.id)">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                    Cetak Berita Acara
+                </button>
+            </div>
+        </div>
+    </div>
+
+    
+    <!-- ================= MODAL SINKRONISASI 2 LAPTOP (100% MURNI HTML/JS P2P) ================= -->
+    <div class="modal-overlay" id="modal-p2p-sync">
+        <div class="modal-content" style="max-width: 680px; text-align: left;">
+            <button class="modal-close-btn" onclick="closeSyncModal()">✕</button>
+
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(6, 182, 212, 0.2); border: 1px solid rgba(103, 232, 249, 0.4); display: flex; align-items: center; justify-content: center; color: #67e8f9;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+                </div>
+                <div>
+                    <h2 style="font-size: 1.3rem; margin: 0; color: #ffffff;">Sinkronisasi Real-Time 2 Laptop</h2>
+                    <p style="font-size: 0.82rem; margin: 2px 0 0; color: #94d2bd;">100% Murni HTML5 & WebRTC — Tanpa PHP, Tanpa Database Server</p>
+                </div>
+            </div>
+
+            <!-- Status Terkini -->
+            <div id="p2p-status-box" style="margin: 14px 0; padding: 12px 16px; border-radius: 10px; background: rgba(2, 16, 21, 0.6); border: 1px solid rgba(103, 232, 249, 0.25); display: flex; align-items: center; gap: 10px;">
+                <span id="sync-status-dot" class="sync-dot waiting"></span>
+                <span id="p2p-status-text" style="font-size: 0.88rem; color: #67e8f9;">Pilih peran laptop ini di bawah (Laptop 1 Panggung atau Laptop 2 Panitia).</span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 14px;">
+                <!-- KARTU A: LAPTOP 1 (LAYAR PANGGUNG) -->
+                <div class="card-panel" style="margin-bottom: 0; border: 1px solid rgba(251, 191, 36, 0.35); background: rgba(4, 20, 26, 0.7);">
+                    <div style="font-size: 0.75rem; color: var(--gold-light); font-weight: 700; letter-spacing: 1px; text-transform: uppercase;">LAPTOP 1 (PANGGUNG)</div>
+                    <h3 style="font-size: 1.05rem; margin: 6px 0 8px; color: #ffffff;">🖥️ Layar Panggung / Videotron</h3>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); line-height: 1.5; margin-bottom: 12px;">
+                        Bertindak sebagai <strong>Penerima Data</strong>. Menampilkan panggung undian dan otomatis memperbarui peserta begitu admin mengunggah CSV.
+                    </p>
+                    <div style="margin-bottom: 12px;">
+                        <label style="font-size: 0.78rem; color: var(--text-dim); display: block; margin-bottom: 4px;">Kode Sambungan Panggung:</label>
+                        <input type="text" id="input-p2p-stage-room" value="SEHATI-BKPSDM" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(103, 232, 249, 0.3); background: rgba(2, 16, 21, 0.8); color: #fbbf24; font-weight: bold; text-align: center; font-size: 0.95rem; text-transform: uppercase;">
+                    </div>
+                    <button class="btn-action demo" style="width: 100%; justify-content: center;" onclick="window.P2PSync.startAsStage(document.getElementById('input-p2p-stage-room').value)">
+                        📡 Buka Siaran Layar Panggung
+                    </button>
+                </div>
+
+                <!-- KARTU B: LAPTOP 2 (ADMIN / PANITIA) -->
+                <div class="card-panel" style="margin-bottom: 0; border: 1px solid rgba(16, 185, 129, 0.35); background: rgba(4, 20, 26, 0.7);">
+                    <div style="font-size: 0.75rem; color: #6ee7b7; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;">LAPTOP 2 (PANITIA)</div>
+                    <h3 style="font-size: 1.05rem; margin: 6px 0 8px; color: #ffffff;">💻 Admin / Pengunggah CSV</h3>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); line-height: 1.5; margin-bottom: 12px;">
+                        Bertindak sebagai <strong>Pengirim Data</strong>. Mengunggah CSV Master / Nominasi sewaktu-waktu & langsung meneruskannya ke Laptop 1.
+                    </p>
+                    <div style="margin-bottom: 12px;">
+                        <label style="font-size: 0.78rem; color: var(--text-dim); display: block; margin-bottom: 4px;">Kode Sambungan Panggung:</label>
+                        <input type="text" id="input-p2p-admin-room" value="SEHATI-BKPSDM" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(103, 232, 249, 0.3); background: rgba(2, 16, 21, 0.8); color: #6ee7b7; font-weight: bold; text-align: center; font-size: 0.95rem; text-transform: uppercase;">
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn-action demo" style="flex: 1; justify-content: center;" onclick="window.P2PSync.connectToStage(document.getElementById('input-p2p-admin-room').value)">
+                            🔗 Sambungkan
+                        </button>
+                        <button class="btn-action" style="flex: 1; justify-content: center; background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; color: #6ee7b7;" onclick="window.P2PSync.broadcastCurrentData()">
+                            🚀 Kirim Data
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Petunjuk Penggunaan -->
+            <div style="margin-top: 14px; padding: 12px; border-radius: 8px; background: rgba(2, 16, 21, 0.4); border: 1px dashed rgba(103, 232, 249, 0.2); font-size: 0.8rem; color: var(--text-dim); line-height: 1.6;">
+                <strong>💡 Cara Penggunaan Saat Acara:</strong><br>
+                1. Di <strong>Laptop 1 (Panggung)</strong>: Klik tombol <em>"Buka Siaran Layar Panggung"</em>.<br>
+                2. Di <strong>Laptop 2 (Panitia)</strong>: Klik tombol <em>"Sambungkan"</em>. Status akan menjadi <strong style="color:#10b981;">🟢 Terhubung</strong>.<br>
+                3. Begitu terhubung, setiap kali Panitia mengunggah CSV Nominasi/Master baru di Laptop 2, datanya <strong>otomatis langsung mengalir ke Layar Panggung</strong> tanpa perlu me-refresh halaman!
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; margin-top: 16px;">
+                <button class="btn-secondary" style="padding: 8px 24px;" onclick="closeSyncModal()">
+                    Tutup Pengaturan
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT APPLICATION -->
+    <script src="js/csv-parser.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/confetti.js"></script>
+    <script src="js/db.js"></script>
+    <script src="js/peerjs.min.js"></script>
+    <script src="js/sync-p2p.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
