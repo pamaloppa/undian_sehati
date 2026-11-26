@@ -117,7 +117,7 @@
             <!-- Quick Prize Name Modifier on Stage -->
             <div class="quick-prize-bar" style="display: none;">
                 <label>Nama Hadiah:</label>
-                <input type="text" id="quick-prize-input" value="Sepeda Listrik">
+                <input type="text" id="quick-prize-input" value="Mesin Cuci">
             </div>
         </section>
 
@@ -149,10 +149,10 @@
                 <div class="prize-section-header-compact">
                     <div class="prize-section-title">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                        PILIH HADIAH (DIUNDI BERGANTIAN — 1 PEMENANG PER HADIAH):
+                        PILIH HADIAH (DIUNDI DARI TAHAP 1 MESIN CUCI S/D PUNCAK SEPEDA LISTRIK):
                     </div>
                     <div class="active-prize-pill-display">
-                        Sedang Diundi: <strong id="stage-prize-name-display" class="prize-highlight-badge">Sepeda Listrik</strong>
+                        Sedang Diundi: <strong id="stage-prize-name-display" class="prize-highlight-badge">Mesin Cuci</strong>
                     </div>
                 </div>
 
@@ -185,7 +185,7 @@
                             <circle cx="7.5" cy="16.5" r="1.5" fill="currentColor"/>
                             <circle cx="16.5" cy="16.5" r="1.5" fill="currentColor"/>
                         </svg>
-                        <span id="btn-draw-label">MULAI UNDI: SEPEDA LISTRIK</span>
+                        <span id="btn-draw-label">MULAI UNDI: MESIN CUCI</span>
                     </button>
                     
                     <button class="btn-secondary" id="btn-show-spotlight" style="display: none;" onclick="openWinnerSpotlightModal(AppState.winnersHistory[0])">
@@ -463,7 +463,7 @@
                         Reset Status Undian
                     </h4>
                     <p style="font-size: 0.82rem; color: var(--text-dim); margin-bottom: 12px; line-height: 1.5;">
-                        Mengosongkan seluruh riwayat pemenang dan mengembalikan posisi pengundian ke hadiah pertama (Sepeda Listrik). Data Master Pegawai & Nominasi <strong>tetap aman tersimpan</strong>.
+                        Mengosongkan seluruh riwayat pemenang dan mengembalikan posisi pengundian ke tahap 1 (Mesin Cuci). Data Master Pegawai & Nominasi <strong>tetap aman tersimpan</strong>.
                     </p>
                     <button class="btn-action danger" style="width: 100%; justify-content: center; padding: 10px;" onclick="resetAllStatus()">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><polyline points="3 3 3 8 8 8"/></svg>
@@ -488,7 +488,7 @@
 
             <div class="modal-header-badge">SAH & TERVERIFIKASI BKPSDM</div>
             <h2 class="modal-title">SELAMAT KEPADA PEMENANG!</h2>
-            <div class="modal-subtitle" id="modal-prize-title">Sepeda Listrik</div>
+            <div class="modal-subtitle" id="modal-prize-title">Mesin Cuci</div>
 
             <div class="modal-winners-grid" id="modal-winners-grid">
                 <!-- 1 single modal winner card -->
@@ -586,13 +586,18 @@
         </div>
     </div>
 
-    <!-- SCRIPT APPLICATION (Cache-busted v=2.6) -->
-    <script src="js/csv-parser.js?v=2.6"></script>
-    <script src="js/audio.js?v=2.6"></script>
-    <script src="js/confetti.js?v=2.6"></script>
-    <script src="js/db.js?v=2.6"></script>
-    <script src="js/peerjs.min.js?v=2.6"></script>
-    <script src="js/sync-p2p.js?v=2.6"></script>
-    <script src="js/app.js?v=2.6"></script>
+    <!-- ELEMEN AUDIO BACKSOUND GRAND PRIZE (OPSIONAL MP3 KUSTOM DARI PANITIA) -->
+    <audio id="audio-grand-prize" preload="auto" style="display: none;">
+        <source src="assets/grand_prize.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- SCRIPT APPLICATION (Cache-busted v=2.7) -->
+    <script src="js/csv-parser.js?v=2.7"></script>
+    <script src="js/audio.js?v=2.7"></script>
+    <script src="js/confetti.js?v=2.7"></script>
+    <script src="js/db.js?v=2.7"></script>
+    <script src="js/peerjs.min.js?v=2.7"></script>
+    <script src="js/sync-p2p.js?v=2.7"></script>
+    <script src="js/app.js?v=2.7"></script>
 </body>
 </html>

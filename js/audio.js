@@ -195,6 +195,190 @@ class SoundEffects {
             }, 850);
         } catch (e) {}
     }
+
+    /**
+     * Backsound Selamat & Fanfare Meriah Akbar khusus GRAND PRIZE (Sepeda Listrik)
+     * Paduan Terompet Megah Kerajaan, Dentuman Meriam Perayaan, Akor Akbar Orkestra, & Lonceng Kilau Emas
+     */
+    playGrandPrizeFanfare() {
+        if (!this.enabled) return;
+        this.ensureContext();
+        if (!this.ctx) return;
+
+        try {
+            // Mainkan elemen audio eksternal jika pengguna menyediakan file kustom di assets
+            const extAudio = document.getElementById('audio-grand-prize');
+            if (extAudio && typeof extAudio.play === 'function') {
+                extAudio.currentTime = 0;
+                extAudio.play().catch(() => {});
+            }
+
+            const now = this.ctx.currentTime;
+
+            // 1. INTRO: ROYAL TRUMPET CALL (Panggilan Terompet Pembuka Megah)
+            const trumpetIntro = [
+                { f: 392.00, t: 0.00, d: 0.12, g: 0.45 }, // G4
+                { f: 392.00, t: 0.14, d: 0.12, g: 0.45 }, // G4
+                { f: 392.00, t: 0.28, d: 0.14, g: 0.50 }, // G4
+                { f: 523.25, t: 0.45, d: 0.45, g: 0.55 }, // C5 (Klimaks Aksen)
+                { f: 392.00, t: 0.95, d: 0.12, g: 0.45 }, // G4
+                { f: 523.25, t: 1.10, d: 0.14, g: 0.50 }, // C5
+                { f: 659.25, t: 1.28, d: 0.50, g: 0.55 }, // E5 (Sustain Terompet)
+            ];
+
+            trumpetIntro.forEach(note => {
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(note.f, now + note.t);
+
+                gain.gain.setValueAtTime(note.g, now + note.t);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + note.t + note.d);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now + note.t);
+                osc.stop(now + note.t + note.d);
+            });
+
+            // 2. TIMPANI / CANNON BASS HITS (Dentuman Gemuruh Kemenangan)
+            const cannonHits = [0.00, 0.45, 1.28, 1.85, 2.30, 2.80];
+            cannonHits.forEach(delay => {
+                const oscBass = this.ctx.createOscillator();
+                const gainBass = this.ctx.createGain();
+                oscBass.type = 'sine';
+                oscBass.frequency.setValueAtTime(140, now + delay);
+                oscBass.frequency.exponentialRampToValueAtTime(35, now + delay + 0.35);
+
+                gainBass.gain.setValueAtTime(0.65, now + delay);
+                gainBass.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.35);
+
+                oscBass.connect(gainBass);
+                gainBass.connect(this.ctx.destination);
+                oscBass.start(now + delay);
+                oscBass.stop(now + delay + 0.35);
+            });
+
+            // 3. TAHAP PUNCAK: GRAND CELEBRATION CHORD & MELODI KEMENANGAN (detik 1.80)
+            setTimeout(() => {
+                if (!this.ctx) return;
+                const climaxTime = this.ctx.currentTime;
+                const grandChord = [
+                    { f: 130.81, type: 'triangle', g: 0.50 }, // C3 (Sub-Bass)
+                    { f: 196.00, type: 'triangle', g: 0.45 }, // G3 (Tenor)
+                    { f: 261.63, type: 'sawtooth', g: 0.35 }, // C4 (Brass Mid)
+                    { f: 329.63, type: 'sawtooth', g: 0.35 }, // E4 (French Horn)
+                    { f: 392.00, type: 'sawtooth', g: 0.35 }, // G4 (Trumpet)
+                    { f: 523.25, type: 'sawtooth', g: 0.40 }, // C5 (Lead Trumpet)
+                    { f: 659.25, type: 'triangle', g: 0.30 }, // E5 (High)
+                    { f: 783.99, type: 'triangle', g: 0.30 }, // G5 (High)
+                    { f: 1046.50, type: 'sine',     g: 0.25 }, // C6 (Flute Sparkle)
+                ];
+
+                grandChord.forEach(voice => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = voice.type;
+                    osc.frequency.setValueAtTime(voice.f, climaxTime);
+
+                    // Vibrato megah kerajaan
+                    osc.frequency.linearRampToValueAtTime(voice.f * 1.008, climaxTime + 1.2);
+                    osc.frequency.linearRampToValueAtTime(voice.f, climaxTime + 2.0);
+
+                    gain.gain.setValueAtTime(voice.g, climaxTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, climaxTime + 2.8);
+
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(climaxTime);
+                    osc.stop(climaxTime + 2.8);
+                });
+
+                // Melodi Utama Sorak Kemenangan (Triumphant Victory Lead)
+                const celebrationMelody = [
+                    { f: 523.25, t: 0.05, d: 0.18, g: 0.45 }, // C5
+                    { f: 587.33, t: 0.22, d: 0.18, g: 0.45 }, // D5
+                    { f: 659.25, t: 0.40, d: 0.22, g: 0.50 }, // E5
+                    { f: 783.99, t: 0.65, d: 0.30, g: 0.55 }, // G5
+                    { f: 1046.50, t: 0.98, d: 1.40, g: 0.60 }, // C6 (Klimaks Tertinggi Grand Prize!)
+                    { f: 1318.51, t: 1.60, d: 0.90, g: 0.35 }  // E6 (Harmoni Kilau Puncak)
+                ];
+
+                celebrationMelody.forEach(note => {
+                    const oscLead = this.ctx.createOscillator();
+                    const gainLead = this.ctx.createGain();
+                    oscLead.type = 'sawtooth';
+                    oscLead.frequency.setValueAtTime(note.f, climaxTime + note.t);
+
+                    gainLead.gain.setValueAtTime(note.g, climaxTime + note.t);
+                    gainLead.gain.exponentialRampToValueAtTime(0.001, climaxTime + note.t + note.d);
+
+                    oscLead.connect(gainLead);
+                    gainLead.connect(this.ctx.destination);
+                    oscLead.start(climaxTime + note.t);
+                    oscLead.stop(climaxTime + note.t + note.d);
+                });
+
+                // Simulasi Gemuruh Tepuk Tangan & Sorak Penonton (Stadium Applause & Cheer Wave)
+                try {
+                    const bufferSize = Math.floor(this.ctx.sampleRate * 2.8);
+                    const noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+                    const output = noiseBuffer.getChannelData(0);
+                    for (let i = 0; i < bufferSize; i++) {
+                        output[i] = Math.random() * 2 - 1;
+                    }
+                    const whiteNoise = this.ctx.createBufferSource();
+                    whiteNoise.buffer = noiseBuffer;
+
+                    const filter = this.ctx.createBiquadFilter();
+                    filter.type = 'bandpass';
+                    filter.frequency.setValueAtTime(950, climaxTime);
+                    filter.Q.setValueAtTime(1.1, climaxTime);
+
+                    const cheerGain = this.ctx.createGain();
+                    cheerGain.gain.setValueAtTime(0.001, climaxTime);
+                    cheerGain.gain.linearRampToValueAtTime(0.20, climaxTime + 0.5);
+                    cheerGain.gain.exponentialRampToValueAtTime(0.001, climaxTime + 2.8);
+
+                    whiteNoise.connect(filter);
+                    filter.connect(cheerGain);
+                    cheerGain.connect(this.ctx.destination);
+                    whiteNoise.start(climaxTime);
+                    whiteNoise.stop(climaxTime + 2.8);
+                } catch (e) {}
+
+            }, 1800);
+
+            // 4. KILAUAN LONCENG EMAS & FIREWORKS SPARKLE (pada detik 2.1 - 3.5)
+            const sparkleBells = [
+                { f: 1046.50, t: 2.10 }, // C6
+                { f: 1318.51, t: 2.25 }, // E6
+                { f: 1567.98, t: 2.40 }, // G6
+                { f: 2093.00, t: 2.55 }, // C7
+                { f: 1567.98, t: 2.75 }, // G6
+                { f: 2093.00, t: 2.95 }, // C7
+                { f: 2637.02, t: 3.15 }  // E7 (Ultra High Sparkle)
+            ];
+
+            sparkleBells.forEach(bell => {
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(bell.f, now + bell.t);
+
+                gain.gain.setValueAtTime(0.20, now + bell.t);
+                gain.gain.exponentialRampToValueAtTime(0.0001, now + bell.t + 0.45);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now + bell.t);
+                osc.stop(now + bell.t + 0.45);
+            });
+
+        } catch (e) {
+            console.warn('Gagal memutar Grand Prize Fanfare:', e);
+        }
+    }
 }
 
 window.soundEffects = new SoundEffects();

@@ -4,11 +4,11 @@
  */
 
 const DEFAULT_PRIZES = [
-    { id: 'prize_1', name: 'Sepeda Listrik', icon: '⚡🚲', num: 1 },
-    { id: 'prize_2', name: 'Sepeda Lipat', icon: '🚲', num: 2 },
-    { id: 'prize_3', name: 'Kulkas 2 Pintu', icon: '❄️', num: 3 },
-    { id: 'prize_4', name: 'TV 32 Inch', icon: '📺', num: 4 },
-    { id: 'prize_5', name: 'Mesin Cuci', icon: '🫧', num: 5 }
+    { id: 'prize_5', name: 'Mesin Cuci', icon: '🫧', num: 1, originalRank: 5, label: 'Tahap 1', isGrandPrize: false },
+    { id: 'prize_4', name: 'TV 32 Inch', icon: '📺', num: 2, originalRank: 4, label: 'Tahap 2', isGrandPrize: false },
+    { id: 'prize_3', name: 'Kulkas 2 Pintu', icon: '❄️', num: 3, originalRank: 3, label: 'Tahap 3', isGrandPrize: false },
+    { id: 'prize_2', name: 'Sepeda Lipat', icon: '🚲', num: 4, originalRank: 2, label: 'Tahap 4', isGrandPrize: false },
+    { id: 'prize_1', name: 'Sepeda Listrik', icon: '⚡🚲', num: 5, originalRank: 1, label: '👑 GRAND PRIZE', isGrandPrize: true }
 ];
 
 const STORAGE_KEYS = {
@@ -26,10 +26,10 @@ const AppState = {
     currentRoundWinners: [],
     isRolling: false,
     prizes: [...DEFAULT_PRIZES],
-    selectedPrizeId: 'prize_1',
+    selectedPrizeId: 'prize_5',
     settings: {
-        drawCount: 1, // Default 1 pemenang per putaran bergantian (bisa diubah ke 5)
-        prizeName: 'Sepeda Listrik',
+        drawCount: 1, // Default 1 pemenang per putaran bergantian
+        prizeName: 'Mesin Cuci',
         excludePreviousWinners: true,
         soundEnabled: true,
         rollDuration: 7000, // base duration in ms
@@ -71,8 +71,24 @@ function loadFromLocalStorageSync() {
         if (savedWinners) AppState.winnersHistory = JSON.parse(savedWinners);
 
         const savedPrizeId = localStorage.getItem(STORAGE_KEYS.SELECTED_PRIZE);
-        if (savedPrizeId && DEFAULT_PRIZES.some(p => p.id === savedPrizeId)) {
-            AppState.selectedPrizeId = savedPrizeId;
+        
+        // Tentukan hadiah aktif:
+        // Jika belum ada riwayat pemenang, wajib mulai dari hadiah tahap 1 (Mesin Cuci)
+        if (!AppState.winnersHistory || AppState.winnersHistory.length === 0) {
+            AppState.selectedPrizeId = DEFAULT_PRIZES[0].id;
+        } else {
+            // Jika ada riwayat, otomatis pilih hadiah urutan berikutnya yang belum diundi
+            const nextUnwon = DEFAULT_PRIZES.find(p => !AppState.winnersHistory.some(r => 
+                (r.prizeId && String(r.prizeId) === String(p.id)) || 
+                (r.prizeName && r.prizeName.toLowerCase().includes(p.name.toLowerCase()))
+            ));
+            if (nextUnwon) {
+                AppState.selectedPrizeId = nextUnwon.id;
+            } else if (savedPrizeId && DEFAULT_PRIZES.some(p => p.id === savedPrizeId)) {
+                AppState.selectedPrizeId = savedPrizeId;
+            } else {
+                AppState.selectedPrizeId = DEFAULT_PRIZES[0].id;
+            }
         }
 
         const savedSettings = localStorage.getItem(STORAGE_KEYS.SETTINGS);
@@ -84,8 +100,8 @@ function loadFromLocalStorageSync() {
         AppState.settings.drawCount = 1;
 
         // Sinkronkan nama hadiah aktif
-        const activePrize = AppState.prizes.find(p => p.id === AppState.selectedPrizeId);
-        if (activePrize) AppState.settings.prizeName = activePrize.name;
+        const activePrize = AppState.prizes.find(p => p.id === AppState.selectedPrizeId) || DEFAULT_PRIZES[0];
+        AppState.settings.prizeName = activePrize.name;
 
         // Muat preferensi hide menu
         const savedMenuHidden = localStorage.getItem('SEHATI_MENU_HIDDEN');
@@ -516,19 +532,31 @@ function lockWinnerSlot(slotEl, winner, rankNumber) {
 function onAllSlotsLocked(winners) {
     AppState.isRolling = false;
 
-    // Hentikan suara putaran
+    const currentPrize = AppState.prizes.find(p => p.id === AppState.selectedPrizeId) || { name: AppState.settings.prizeName };
+    const isGrandPrize = currentPrize.id === 'prize_1' || currentPrize.isGrandPrize || (currentPrize.name && currentPrize.name.toLowerCase().includes('sepeda listrik'));
+
+    // Efek Suara: Khusus Sepeda Listrik putar Backsound Selamat & Fanfare Akbar Kerajaan!
     if (window.soundEffects) {
         window.soundEffects.stopRollSound();
-        window.soundEffects.playFanfare();
+        if (isGrandPrize) {
+            window.soundEffects.playGrandPrizeFanfare();
+        } else {
+            window.soundEffects.playFanfare();
+        }
     }
 
-    // Ledakan konfeti panggung
+    // Ledakan Konfeti Panggung: Khusus Sepeda Listrik 4 Gelombang Emas Spektakuler!
     if (window.ConfettiManager) {
-        window.ConfettiManager.burst(250, true);
-        setTimeout(() => window.ConfettiManager.burst(150, false), 700);
+        if (isGrandPrize) {
+            window.ConfettiManager.burst(400, true);
+            setTimeout(() => window.ConfettiManager.burst(250, false), 500);
+            setTimeout(() => window.ConfettiManager.burst(350, true), 1200);
+            setTimeout(() => window.ConfettiManager.burst(250, false), 1800);
+        } else {
+            window.ConfettiManager.burst(250, true);
+            setTimeout(() => window.ConfettiManager.burst(150, false), 700);
+        }
     }
-
-    const currentPrize = AppState.prizes.find(p => p.id === AppState.selectedPrizeId) || { name: AppState.settings.prizeName };
 
     // Catat ke Riwayat Pemenang
     const roundData = {
@@ -539,6 +567,7 @@ function onAllSlotsLocked(winners) {
         }),
         prizeId: AppState.selectedPrizeId,
         prizeName: currentPrize.name,
+        isGrandPrize: isGrandPrize,
         winners: winners
     };
 
@@ -566,12 +595,17 @@ function onAllSlotsLocked(winners) {
         const nextPrize = (currIdx >= 0 && currIdx < AppState.prizes.length - 1) ? AppState.prizes[currIdx + 1] : null;
 
         if (nextPrize) {
-            msgEl.innerHTML = `🎉 Selamat! Pengundian untuk <strong>${currentPrize.name}</strong> selesai! (${winners.length} Pemenang Sah).`;
-            btnNext.textContent = `Lanjut ke Hadiah Berikutnya (${nextPrize.name}) 👉`;
+            if (nextPrize.isGrandPrize) {
+                msgEl.innerHTML = `🎉 Selamat! Pengundian untuk <strong>${currentPrize.name}</strong> selesai! Bersiaplah menuju 👑 <strong>PUNCAK GRAND PRIZE: ${nextPrize.name}</strong>! ⚡🚲`;
+                btnNext.textContent = `👑 Lanjut ke PUNCAK GRAND PRIZE (${nextPrize.name}) 👉`;
+            } else {
+                msgEl.innerHTML = `🎉 Selamat! Pengundian untuk <strong>${currentPrize.name}</strong> selesai! (${winners.length} Pemenang Sah).`;
+                btnNext.textContent = `Lanjut ke Hadiah Berikutnya (${nextPrize.name}) 👉`;
+            }
             btnNext.onclick = goToNextPrize;
             btnNext.style.display = 'inline-block';
         } else {
-            msgEl.innerHTML = `🏆 Rangkaian pengundian seluruh 5 hadiah utama telah berhasil diselesaikan!`;
+            msgEl.innerHTML = `👑 <strong>SELAMAT KEPADA SELURUH PEMENANG!</strong><br>Puncak pengundian Grand Prize <strong>${currentPrize.name}</strong> & seluruh 5 hadiah utama telah berhasil diselesaikan! 🎊`;
             btnNext.textContent = `Lihat Riwayat & Cetak Berita Acara 👉`;
             btnNext.onclick = () => {
                 document.querySelector('.nav-tab-btn[data-tab="tab-history"]')?.click();
@@ -626,9 +660,12 @@ function renderPrizeCards() {
         let cardClass = 'prize-card';
         if (isActive) cardClass += ' active';
         if (isDrawn) cardClass += ' drawn';
+        if (prize.isGrandPrize) cardClass += ' grand-prize';
 
         card.className = cardClass;
         card.onclick = () => selectPrize(prize.id);
+
+        const grandPill = prize.isGrandPrize ? `<div class="grand-badge-pill">👑 GRAND PRIZE</div>` : '';
 
         if (isDrawn && lastWinner) {
             // TAMPILAN SETELAH DIUNDI: NIP, Nama, OPD, dan Foto Pemenang!
@@ -640,9 +677,10 @@ function renderPrizeCards() {
             const opdDisplay = lastWinner.opd || lastWinner.unitKerja || 'Pemerintah Daerah';
 
             card.innerHTML = `
+                ${grandPill}
                 <div class="prize-card-drawn-layout">
                     <div class="pc-drawn-top">
-                        <span class="prize-card-num">#${prize.num}</span>
+                        <span class="prize-card-num">${prize.isGrandPrize ? '👑 #' + prize.num : '#' + prize.num}</span>
                         <span class="prize-card-title">${prize.name}</span>
                         <span class="prize-card-status drawn">✓ SAH</span>
                     </div>
@@ -665,8 +703,14 @@ function renderPrizeCards() {
                 statusText = '★ Sedang Aktif';
             }
 
+            const stepTag = prize.label && !prize.isGrandPrize ? `<span class="prize-step-tag">${prize.label}</span>` : '';
+
             card.innerHTML = `
-                <span class="prize-card-num">#${prize.num}</span>
+                ${grandPill}
+                <div class="prize-card-header-row">
+                    <span class="prize-card-num">${prize.isGrandPrize ? '👑 #' + prize.num : '#' + prize.num}</span>
+                    ${stepTag}
+                </div>
                 <div class="prize-card-icon">${prize.icon}</div>
                 <div class="prize-card-body">
                     <div class="prize-card-title">${prize.name}</div>
@@ -754,15 +798,20 @@ function renderSlotPlaceholders(count = 1) {
 
     container.className = 'slots-container single-slot';
 
+    const isGrand = currentPrize.id === 'prize_1' || currentPrize.isGrandPrize || (currentPrize.name && currentPrize.name.toLowerCase().includes('sepeda listrik'));
+
     const slot = document.createElement('div');
-    slot.className = 'slot-card';
+    slot.className = isGrand ? 'slot-card grand-prize-slot' : 'slot-card';
     slot.id = 'slot-card-1';
+
+    const rankBadgeHtml = isGrand
+        ? `👑 PUNCAK GRAND PRIZE: ${currentPrize.name.toUpperCase()} ⚡🚲`
+        : `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> Hadiah Tahap #${currentPrize.num || 1}: ${currentPrize.name}`;
 
     slot.innerHTML = `
         <div class="slot-header">
-            <span class="slot-rank-badge">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                Pemenang Hadiah: ${currentPrize.name}
+            <span class="slot-rank-badge ${isGrand ? 'grand' : ''}">
+                ${rankBadgeHtml}
             </span>
         </div>
         <div class="slot-avatar">
@@ -776,13 +825,13 @@ function renderSlotPlaceholders(count = 1) {
             </span>
         </div>
         <div class="slot-body">
-            <div class="slot-name">Siap Diundi</div>
+            <div class="slot-name">${isGrand ? 'Siap Mengundi Hadiah Utama' : 'Siap Diundi'}</div>
             <div class="slot-nip">NIP: ••••••••••••••••••</div>
             <div class="slot-unit">Tekan tombol di bawah untuk mengundi pemenang</div>
             <div class="slot-jabatan"></div>
         </div>
         <div class="slot-footer">
-            <span class="slot-status-pill">Standby</span>
+            <span class="slot-status-pill ${isGrand ? 'grand' : ''}">${isGrand ? '👑 Puncak Standby' : 'Standby'}</span>
         </div>
     `;
 
@@ -1187,12 +1236,29 @@ function openWinnerSpotlightModal(roundData) {
     const gridEl = document.getElementById('modal-winners-grid');
     if (!modal || !gridEl) return;
 
-    if (titleEl) titleEl.textContent = `Pemenang Sah: ${roundData.prizeName || 'Hadiah Utama'}`;
+    const isGrand = roundData.prizeId === 'prize_1' || 
+                    roundData.isGrandPrize || 
+                    (roundData.prizeName && roundData.prizeName.toLowerCase().includes('sepeda listrik'));
+
+    if (titleEl) {
+        if (isGrand) {
+            titleEl.innerHTML = `👑 <span style="color:#fbbf24; text-shadow:0 0 15px rgba(251,191,36,0.6); font-weight:900;">PUNCAK GRAND PRIZE:</span> ${roundData.prizeName || 'Sepeda Listrik'} ⚡🚲`;
+        } else {
+            titleEl.textContent = `Pemenang Sah: ${roundData.prizeName || 'Hadiah Utama'}`;
+        }
+    }
     gridEl.innerHTML = '';
+
+    if (isGrand) {
+        const grandBanner = document.createElement('div');
+        grandBanner.className = 'grand-spotlight-banner';
+        grandBanner.innerHTML = `✨ 👑 SELAMAT KEPADA PEMENANG UTAMA ASN SEHATI BKPSDM! 👑 ✨`;
+        gridEl.appendChild(grandBanner);
+    }
 
     roundData.winners.forEach((w) => {
         const card = document.createElement('div');
-        card.className = 'modal-winner-card';
+        card.className = isGrand ? 'modal-winner-card grand-winner' : 'modal-winner-card';
         const achieveBadge = (w.keterangan && w.keterangan !== 'Peserta Nominasi SEHATI')
             ? `<div style="margin-top: 8px; font-size: 0.85rem; color: #fbbf24; background: rgba(251, 191, 36, 0.15); padding: 4px 12px; border-radius: 20px; display: inline-block; border: 1px solid rgba(251, 191, 36, 0.35); font-weight: 600;">${w.keterangan}</div>`
             : '';
@@ -1610,7 +1676,7 @@ function resetAllStatus(silent = false) {
             "⚠️ KONFIRMASI RESET SEMUA STATUS UNDIAN\n\n" +
             "Apakah Anda yakin ingin me-reset seluruh status pengundian?\n\n" +
             "• Seluruh riwayat pemenang akan dikosongkan (pemenang bisa diundi lagi).\n" +
-            "• Kategori hadiah kembali ke hadiah pertama (Sepeda Listrik).\n" +
+            "• Kategori hadiah kembali ke hadiah tahap 1 (Mesin Cuci).\n" +
             "• Panggung undian kembali ke status Standby awal.\n" +
             "• (Database Pegawai & Nominasi TETAP AMAN tersimpan).\n\n" +
             "Lanjutkan reset status?"
@@ -1623,9 +1689,9 @@ function resetAllStatus(silent = false) {
     AppState.isRolling = false;
     AppState.currentRoundWinners = [];
 
-    // 2. Reset status hadiah ke hadiah pertama (Sepeda Listrik)
-    AppState.selectedPrizeId = (AppState.prizes && AppState.prizes[0]) ? AppState.prizes[0].id : 1;
-    AppState.settings.prizeName = (AppState.prizes && AppState.prizes[0]) ? AppState.prizes[0].name : 'Sepeda Listrik';
+    // 2. Reset status hadiah ke hadiah pertama urutan undian (Mesin Cuci)
+    AppState.selectedPrizeId = (AppState.prizes && AppState.prizes[0]) ? AppState.prizes[0].id : 'prize_5';
+    AppState.settings.prizeName = (AppState.prizes && AppState.prizes[0]) ? AppState.prizes[0].name : 'Mesin Cuci';
 
     // 3. Sembunyikan prompt next prize & tombol spotlight
     const promptEl = document.getElementById('next-prize-prompt');
